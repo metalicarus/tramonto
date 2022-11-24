@@ -5,6 +5,8 @@ import java.util.Date;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -13,10 +15,13 @@ import javax.persistence.TemporalType;
 
 import br.com.wsss.tramonto.domain.type.TestAggression;
 import br.com.wsss.tramonto.domain.type.TestApproach;
-import br.com.wsss.tramonto.domain.type.TestStatus;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "TESTS")
+@Getter
+@Setter
 public class Test extends BaseEntity {
 	
 	@Column(name= "IDENTIFIER", nullable = false, unique = true, updatable = false)
@@ -27,7 +32,7 @@ public class Test extends BaseEntity {
 	private Date initialDate;
 	
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name= "FINAL_DATE", nullable= false)
+	@Column(name= "FINAL_DATE", nullable= true)
 	private Date finalDate;
 	
 	@Temporal(TemporalType.TIME)
@@ -46,20 +51,19 @@ public class Test extends BaseEntity {
 	
 	@Column(name= "DESCRIPTION", nullable= false)
 	private String description;
-	
-	@Column(name= "STATUS", nullable= false)
-	private TestStatus status;
-	
+		
+    @Enumerated(EnumType.STRING)
 	@Column(name= "APPROACH")
 	private TestApproach approach;
 	
+    @Enumerated(EnumType.STRING)
 	@Column(name= "AGGRESSION", nullable= false)
 	private TestAggression aggression;
 	
 	@Column(name= "GENERAL_OBSERVATION")
 	private String generalObservation;
 	
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "TYPE", referencedColumnName = "ID", nullable = false)
 	private TestType type;
 	

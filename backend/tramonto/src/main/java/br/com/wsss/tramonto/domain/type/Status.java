@@ -1,6 +1,6 @@
 package br.com.wsss.tramonto.domain.type;
 
-public enum TestStatus {
+public enum Status {
 	ACTIVE,
 	INACTIVE
 }

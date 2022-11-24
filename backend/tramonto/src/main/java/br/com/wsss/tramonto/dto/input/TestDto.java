@@ -12,7 +12,11 @@ import lombok.Setter;
 public class TestDto extends BaseDto {
 
 	private String identifier;
+	
+	@JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss")
 	private Date initialDate;
+	
+	@JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss")
 	private Date finalDate;
 	
 	@JsonFormat(pattern="HH:mm:ss")

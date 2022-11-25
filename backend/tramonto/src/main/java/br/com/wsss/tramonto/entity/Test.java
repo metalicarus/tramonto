@@ -7,6 +7,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -63,7 +64,7 @@ public class Test extends BaseEntity {
 	@Column(name= "GENERAL_OBSERVATION")
 	private String generalObservation;
 	
-    @OneToOne(cascade = CascadeType.MERGE)
+    @OneToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
     @JoinColumn(name = "TYPE", referencedColumnName = "ID", nullable = false)
 	private TestType type;
 	

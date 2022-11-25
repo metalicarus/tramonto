@@ -37,8 +37,7 @@ public class TestServiceImpl implements TestService {
 
 	@Override
 	public TestDto findById(UUID id) {
-		// TODO Auto-generated method stub
-		return null;
+		return mapper.testToTestDto(repository.findById(id).get());
 	}
 
 	@Override
@@ -62,7 +61,7 @@ public class TestServiceImpl implements TestService {
 		Pageable request = PageRequest.of(page, perPage);
 		Page<Test> pages = repository.findByTitleContaining(filter, request);
 		return new PageResponse<TestDto>(pages.getContent().stream().map(x -> {
-			return mapper.testToTestDto(x);
+			return mapper.toPage(x);
 		}).collect(Collectors.toList()), request, pages.getTotalElements(), 
 				pages.getNumber());
 	}

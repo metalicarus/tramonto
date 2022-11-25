@@ -30,4 +30,10 @@ public class TestDto extends BaseDto {
 	private String aggression;
 	private String generalObservation;
 	private TestTypeDto type;
+	
+	
+	@Getter
+	@Setter
+	public class TestDtoPage {}
+	
 }

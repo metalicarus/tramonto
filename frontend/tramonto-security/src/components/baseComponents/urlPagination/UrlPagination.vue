@@ -11,8 +11,8 @@
 </template>
 
 <script lang="ts">
-import { useRouter } from 'vue-router';
 import { ref } from 'vue';
+import QueryStringReplace from 'src/utils/QueryStringReplace.vue';
 
 export default {
   name: 'UrlPagination',
@@ -25,18 +25,11 @@ export default {
   emits: ['update'],
   setup(props: never, ctx: { emit: (arg0: string, arg1: number) => void; }) {
     const page = ref(1);
-    const router = useRouter();
+    const { replaceParam } = QueryStringReplace.setup();
     function setCurrentPage(newPage: number): void {
       page.value = newPage;
-      router.push({
-        query: {
-          page: newPage - 1,
-          perPage: router.currentRoute.value.query.perPage,
-          sortBy: router.currentRoute.value.query.sortBy,
-          direction: router.currentRoute.value.query.direction,
-        },
-      });
       ctx.emit('update', newPage - 1);
+      replaceParam('page', newPage - 1);
     }
     return {
       setCurrentPage,

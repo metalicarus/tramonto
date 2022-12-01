@@ -1,10 +1,13 @@
 package br.com.wsss.tramonto.controller.v1;
 
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,6 +32,12 @@ public class StrategyController {
 	@ResponseStatus(HttpStatus.CREATED)
 	public ResponseEntity<StrategyDto> save(@RequestBody StrategyDto dto) {
 		return ResponseEntity.ok(service.save(dto));
+	}
+	
+	@GetMapping("{strategyId}")
+	@ResponseStatus(HttpStatus.OK)
+	public ResponseEntity<StrategyDto> findById(@PathVariable UUID strategyId) {
+		return ResponseEntity.ok(service.findById(strategyId));
 	}
 	
 	@GetMapping

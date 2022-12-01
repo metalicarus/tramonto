@@ -2,24 +2,32 @@
   <q-input
     outlined
     dense
-    :model-value="text"
+    v-model="text"
     debounce="300"
     placeholder="Search">
-    <template v-slot:append>
-      <q-icon name="search" />
+    <template v-slot:after>
+      <q-btn outline @click="setText">
+        <q-icon name="search" />
+      </q-btn>
     </template>
   </q-input>
 </template>
 
 <script lang="ts">
 import { ref } from 'vue';
+import QueryStringReplace from 'src/utils/QueryStringReplace.vue';
 
 export default {
   name: 'UrlFilter',
   setup() {
     const text = ref('');
+    const { replaceParam } = QueryStringReplace.setup();
+    function setText() {
+      replaceParam('filter', text.value);
+    }
     return {
       text,
+      setText,
     };
   },
 };

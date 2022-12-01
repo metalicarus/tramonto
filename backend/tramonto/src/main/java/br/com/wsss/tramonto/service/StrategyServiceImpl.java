@@ -36,8 +36,7 @@ public class StrategyServiceImpl implements StrategyService {
 
 	@Override
 	public StrategyDto findById(UUID id) {
-		// TODO Auto-generated method stub
-		return null;
+		return mapper.strategyToDto(repository.findById(id).get());
 	}
 
 	@Override

@@ -1,4 +1,10 @@
 import { RouteRecordRaw } from 'vue-router';
+import {
+  ANCHOR_PAGE,
+  STRATEGIES_PAGINATE,
+  STRATEGIES_SAVE,
+  STRATEGIES_UPDATE,
+} from 'src/consts/RoutesConsts';
 
 // eslint-disable-next-line consistent-return
 function addQueryStringPagination(to: any) {
@@ -17,7 +23,7 @@ function addQueryStringPagination(to: any) {
 }
 const routes: RouteRecordRaw[] = [
   {
-    path: '/',
+    path: ANCHOR_PAGE,
     component: () => import('layouts/MainLayout.vue'),
     children: [
       {
@@ -28,7 +34,7 @@ const routes: RouteRecordRaw[] = [
         },
       },
       {
-        path: '/strategies',
+        path: STRATEGIES_PAGINATE,
         component: () => import('pages/strategies/IndexPage.vue'),
         meta: {
           type: 'pagination',
@@ -36,7 +42,7 @@ const routes: RouteRecordRaw[] = [
         beforeEnter: [addQueryStringPagination],
       },
       {
-        path: '/strategies/save',
+        path: STRATEGIES_SAVE,
         component: () => import('pages/strategies/SavePage.vue'),
         meta: {
           type: 'save',

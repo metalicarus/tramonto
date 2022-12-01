@@ -6,8 +6,8 @@
     :row-key="rowKey"
     :loading="loading"
     :rows="rows"
-    :rows-per-page-options="[5,10,15]"
     :hide-pagination="true"
+    :rows-per-page-options="[10]"
   >
     <template v-slot:top-right>
       <url-filter />
@@ -20,6 +20,17 @@
         <div>
           <q-badge :color="props.value === 'ACTIVE' ? 'green' : 'red'" :label="props.value" />
         </div>
+      </q-td>
+    </template>
+    <template v-slot:body-cell-actions="props">
+      <q-td :props="props">
+        <q-btn flat
+               rounded
+               size="sm"
+               color="primary"
+               icon="edit"
+               @click="$router.push({ path: editRoute, query: { uuid: props.row.id }});"
+        />
       </q-td>
     </template>
   </q-table>
@@ -38,12 +49,17 @@ import UrlFilter from 'components/baseComponents/urlFilter/UrlFilter.vue';
 
 export default {
   components: { UrlFilter, UrlPagination },
+  props: {
+    editRoute: {
+      type: String,
+      required: true,
+    },
+  },
   setup() {
     const columns = Columns;
     const rowKey = ref(RowKey);
     const loading = ref(true);
     const rows = ref([]);
-    const current = ref(3);
     const pagination = ref({
       totalItems: 11,
       page: 0,
@@ -74,7 +90,6 @@ export default {
       rowKey,
       loading,
       rows,
-      current,
       pagination,
       updatePage,
     };

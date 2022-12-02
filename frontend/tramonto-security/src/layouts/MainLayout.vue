@@ -40,13 +40,20 @@ import { ref } from 'vue';
 import EssentialLink, {
   EssentialLinkProps,
 } from 'components/EssentialLink.vue';
+import { STRATEGIES_PAGINATE, VECTORS_CATEGORIES_PAGINATE } from 'src/consts/RoutesConsts';
 
 const essentialLinks: EssentialLinkProps[] = [
   {
     title: 'Strategies',
     caption: 'Testing strategies',
     icon: 'far fa-chess-knight',
-    link: '#/strategies',
+    link: `#${STRATEGIES_PAGINATE}`,
+  },
+  {
+    title: 'Vector Categories',
+    caption: 'Vector Categories',
+    icon: 'fa fa-vector-square',
+    link: `#${VECTORS_CATEGORIES_PAGINATE}`,
   },
 ];
 

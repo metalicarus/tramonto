@@ -1,6 +1,6 @@
 <template>
   <q-table
-    title="Strategies"
+    :title="label"
     color="primary"
     :columns="columns"
     :row-key="rowKey"
@@ -39,18 +39,22 @@
     @update="updatePage"
   />
 </template>
-<script lang="ts">
 
-import { Columns, RowKey } from 'components/strategy/table/StrategyTableDefine';
-import { onMounted, ref } from 'vue';
-import StrategySerivce from 'src/services/strategy.serivce';
-import UrlPagination from 'components/baseComponents/urlPagination/UrlPagination.vue';
+<script lang="ts">
 import UrlFilter from 'components/baseComponents/urlFilter/UrlFilter.vue';
+import UrlPagination from 'components/baseComponents/urlPagination/UrlPagination.vue';
+import { Columns, RowKey } from 'components/vectorCategory/table/VectorCategoryTableDefine';
+import { onMounted, ref } from 'vue';
+import VectorCategoryService from 'src/services/vectorCategory.service';
 
 export default {
   components: { UrlFilter, UrlPagination },
   props: {
     editRoute: {
+      type: String,
+      required: true,
+    },
+    label: {
       type: String,
       required: true,
     },
@@ -70,7 +74,7 @@ export default {
     });
     function refresh(): void {
       loading.value = true;
-      StrategySerivce.paginate(pagination.value.filter, pagination.value.page, pagination.value.perPage, '', '').then((response) => {
+      VectorCategoryService.paginate(pagination.value.filter, pagination.value.page, pagination.value.perPage, '', '').then((response) => {
         rows.value = response.data.content;
         loading.value = false;
         pagination.value.totalItems = response.data.totalItems - response.data.content.length;
@@ -102,6 +106,7 @@ export default {
   },
 };
 </script>
+
 <style scoped>
 
 </style>

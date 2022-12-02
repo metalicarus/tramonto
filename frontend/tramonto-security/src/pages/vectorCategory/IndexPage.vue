@@ -19,31 +19,36 @@
       </q-btn>
     </div>
     <q-card bordered class="q-pa-lg" flat>
-      <paginate-stategy :edit-route="editRoute" />
+      <paginate-vector-category :edit-route="editRoute" :label="label" />
     </q-card>
   </q-page>
 </template>
 
-<script lang="ts">
-import PaginateStategy from 'components/strategy/PaginateStategy.vue';
+<script>
 import { useRoute } from 'vue-router';
-import { ANCHOR_PAGE, STRATEGIES_PAGINATE, STRATEGIES_SAVE } from 'src/consts/RoutesConsts';
+
+import PaginateVectorCategory from 'components/vectorCategory/PaginateVectorCategory.vue';
+import {
+  ANCHOR_PAGE,
+  VECTORS_CATEGORIES_PAGINATE, VECTORS_CATEGORIES_SAVE,
+} from '../../consts/RoutesConsts';
 
 export default {
-  components: { PaginateStategy },
+  name: 'IndexPage',
+  components: { PaginateVectorCategory },
   setup() {
-    const label = 'Strategies';
-    const icon = 'far fa-chess-knight';
+    const icon = 'fa fa-vector-square';
+    const label = 'Vector Categories';
     const anchorRoute = ANCHOR_PAGE;
-    const mainRoute = STRATEGIES_PAGINATE;
-    const editRoute = STRATEGIES_SAVE;
+    const mainRoute = VECTORS_CATEGORIES_PAGINATE;
+    const editRoute = VECTORS_CATEGORIES_SAVE;
     const router = useRoute();
     return {
       icon,
       anchorRoute,
+      label,
       mainRoute,
       editRoute,
-      label,
       router,
     };
   },

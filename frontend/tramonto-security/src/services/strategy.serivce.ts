@@ -13,12 +13,13 @@ class StrategyService {
 
   // eslint-disable-next-line class-methods-use-this
   paginate(
+    filter: string,
     page: number,
     perPage: number,
     sortBy: string,
     direction: string,
   ): Promise<AxiosResponse<any>> {
-    return api.get(`/v1/strategy?filter=&page=${page}&perPage=${perPage}&sortBy=strategy&direction=ASC`);
+    return api.get(`/v1/strategy?filter=${filter}&page=${page}&perPage=${perPage}&sortBy=strategy&direction=ASC`);
   }
 }
 export default new StrategyService();

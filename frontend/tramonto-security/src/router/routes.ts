@@ -3,7 +3,7 @@ import {
   ANCHOR_PAGE,
   STRATEGIES_PAGINATE,
   STRATEGIES_SAVE,
-  STRATEGIES_UPDATE,
+  STRATEGIES_UPDATE, VECTORS_CATEGORIES_PAGINATE, VECTORS_CATEGORIES_SAVE,
 } from 'src/consts/RoutesConsts';
 
 // eslint-disable-next-line consistent-return
@@ -44,6 +44,21 @@ const routes: RouteRecordRaw[] = [
       {
         path: STRATEGIES_SAVE,
         component: () => import('pages/strategies/SavePage.vue'),
+        meta: {
+          type: 'save',
+        },
+      },
+      {
+        path: VECTORS_CATEGORIES_PAGINATE,
+        component: () => import('pages/vectorCategory/IndexPage.vue'),
+        meta: {
+          type: 'pagination',
+        },
+        beforeEnter: [addQueryStringPagination],
+      },
+      {
+        path: VECTORS_CATEGORIES_SAVE,
+        component: () => import('pages/vectorCategory/SavePage.vue'),
         meta: {
           type: 'save',
         },

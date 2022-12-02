@@ -19,11 +19,12 @@ import QueryStringReplace from 'src/utils/QueryStringReplace.vue';
 
 export default {
   name: 'UrlFilter',
-  setup() {
+  setup(props: any, ctx: any) {
     const text = ref('');
     const { replaceParam } = QueryStringReplace.setup();
     function setText() {
       replaceParam('filter', text.value);
+      ctx.emit('update', text.value);
     }
     return {
       text,

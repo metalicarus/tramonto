@@ -5,10 +5,12 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import br.com.wsss.tramonto.domain.type.Status;
 import br.com.wsss.tramonto.dto.input.TestTypeDto;
+import br.com.wsss.tramonto.dto.output.PageResponse;
 import br.com.wsss.tramonto.entity.TestType;
 import br.com.wsss.tramonto.mapper.contract.TestTypeMapper;
 import br.com.wsss.tramonto.repository.contract.jpa.TestTypeRepository;
@@ -52,7 +54,10 @@ public class TestTypeServiceImpl implements TestTypeService {
 		}).collect(Collectors.toSet());
 	}
 
- 
-
- 
+	@Override
+	public PageResponse<TestTypeDto> paginate(String filter, Integer page, Integer perPage, String sortBy,
+			Direction direction) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

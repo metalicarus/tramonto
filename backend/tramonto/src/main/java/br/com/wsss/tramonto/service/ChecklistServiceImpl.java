@@ -30,8 +30,9 @@ public class ChecklistServiceImpl implements BaseService<ChecklistDto, UUID> {
 
 	@Override
 	public Set<ChecklistDto> findAll() {
-		// TODO Auto-generated method stub
-		return null;
+		return repository.findAll().stream().map(x -> {
+			return mapper.checklistToDto(x);
+		}).collect(Collectors.toSet());
 	}
 
 	@Override

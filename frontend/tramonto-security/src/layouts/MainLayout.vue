@@ -40,7 +40,11 @@ import { ref } from 'vue';
 import EssentialLink, {
   EssentialLinkProps,
 } from 'components/EssentialLink.vue';
-import { STRATEGIES_PAGINATE, VECTORS_CATEGORIES_PAGINATE } from 'src/consts/RoutesConsts';
+import {
+  CHECKLISTS_ICON, CHECKLISTS_PAGINATE,
+  STRATEGIES_PAGINATE, TESTS_ICON, TESTS_SAVE, VECTORS_CATEGORIES_PAGINATE,
+} from 'src/consts/RoutesConsts';
+import { CHECKLISTS } from 'src/consts/LabelsConsts';
 
 const essentialLinks: EssentialLinkProps[] = [
   {
@@ -54,6 +58,18 @@ const essentialLinks: EssentialLinkProps[] = [
     caption: 'Vector Categories',
     icon: 'fa fa-vector-square',
     link: `#${VECTORS_CATEGORIES_PAGINATE}`,
+  },
+  {
+    title: CHECKLISTS,
+    caption: 'Testing checklists',
+    icon: CHECKLISTS_ICON,
+    link: `#${CHECKLISTS_PAGINATE}`,
+  },
+  {
+    title: 'Tests',
+    caption: 'Tests for Tramonto',
+    icon: TESTS_ICON,
+    link: `#${TESTS_SAVE}`,
   },
 ];
 

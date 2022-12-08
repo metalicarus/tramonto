@@ -1,9 +1,9 @@
 import { RouteRecordRaw } from 'vue-router';
 import {
-  ANCHOR_PAGE,
+  ANCHOR_PAGE, CHECKLISTS_PAGINATE, CHECKLISTS_SAVE,
   STRATEGIES_PAGINATE,
   STRATEGIES_SAVE,
-  STRATEGIES_UPDATE, VECTORS_CATEGORIES_PAGINATE, VECTORS_CATEGORIES_SAVE,
+  STRATEGIES_UPDATE, TESTS_SAVE, VECTORS_CATEGORIES_PAGINATE, VECTORS_CATEGORIES_SAVE,
 } from 'src/consts/RoutesConsts';
 
 // eslint-disable-next-line consistent-return
@@ -62,6 +62,22 @@ const routes: RouteRecordRaw[] = [
         meta: {
           type: 'save',
         },
+      },
+      {
+        path: TESTS_SAVE,
+        component: () => import('pages/tests/SavePage.vue'),
+        meta: { type: 'save' },
+      },
+      {
+        path: CHECKLISTS_PAGINATE,
+        component: () => import('pages/checklists/IndexPage.vue'),
+        meta: { type: 'pagination' },
+        beforeEnter: [addQueryStringPagination],
+      },
+      {
+        path: CHECKLISTS_SAVE,
+        component: () => import('pages/checklists/SavePage.vue'),
+        meta: { type: 'save' },
       },
     ],
   },

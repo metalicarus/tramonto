@@ -1,5 +1,6 @@
 package br.com.wsss.tramonto.controller.v1;
 
+import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.wsss.tramonto.dto.input.ChecklistDto;
-import br.com.wsss.tramonto.dto.input.StrategyDto;
 import br.com.wsss.tramonto.dto.output.PageResponse;
 import br.com.wsss.tramonto.service.contract.BaseService;
 
@@ -35,10 +35,16 @@ public class ChecklistController {
 		return ResponseEntity.ok(service.save(dto));
 	}
 	
-	@GetMapping("{strategyId}")
+	@GetMapping("{checklistId}")
 	@ResponseStatus(HttpStatus.OK)
-	public ResponseEntity<ChecklistDto> findById(@PathVariable UUID strategyId) {
-		return ResponseEntity.ok(service.findById(strategyId));
+	public ResponseEntity<ChecklistDto> findById(@PathVariable UUID checklistId) {
+		return ResponseEntity.ok(service.findById(checklistId));
+	}
+	
+	@GetMapping("/findAll")
+	@ResponseStatus(HttpStatus.OK)
+	public ResponseEntity<Set<ChecklistDto>> findAll() {
+		return ResponseEntity.ok(service.findAll());
 	}
 	
 	@GetMapping

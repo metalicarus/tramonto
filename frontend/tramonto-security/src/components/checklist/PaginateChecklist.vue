@@ -41,14 +41,14 @@
 </template>
 
 <script lang="ts">
-import UrlFilter from 'components/baseComponents/urlFilter/UrlFilter.vue';
-import UrlPagination from 'components/baseComponents/urlPagination/UrlPagination.vue';
-import { Columns, RowKey } from 'components/vectorCategory/table/VectorCategoryTableDefine';
 import { onMounted, ref } from 'vue';
-import VectorCategoryService from 'src/services/vectorCategory.service';
+import { Columns, RowKey } from './table/ChecklistTableDefine';
+import ChecklistService from '../../services/Checklist.service';
+import UrlPagination from '../baseComponents/urlPagination/UrlPagination.vue';
+import UrlFilter from '../baseComponents/urlFilter/UrlFilter.vue';
 
 export default {
-  name: 'PaginateVectorCategory',
+  name: 'PaginateChecklist',
   components: { UrlFilter, UrlPagination },
   props: {
     editRoute: {
@@ -61,8 +61,6 @@ export default {
     },
   },
   setup() {
-    const columns = Columns;
-    const rowKey = ref(RowKey);
     const loading = ref(true);
     const rows = ref([]);
     const pagination = ref({
@@ -75,7 +73,7 @@ export default {
     });
     function refresh(): void {
       loading.value = true;
-      VectorCategoryService.paginate(pagination.value.filter, pagination.value.page, pagination.value.perPage, '', '').then((response) => {
+      ChecklistService.paginate(pagination.value.filter, pagination.value.page, pagination.value.perPage, '', '').then((response) => {
         rows.value = response.data.content;
         loading.value = false;
         pagination.value.totalItems = response.data.totalItems - response.data.content.length;
@@ -96,11 +94,11 @@ export default {
       refresh();
     });
     return {
-      columns,
-      rowKey,
+      columns: Columns,
+      rowKey: RowKey,
+      pagination,
       loading,
       rows,
-      pagination,
       updatePage,
       updateFilter,
     };

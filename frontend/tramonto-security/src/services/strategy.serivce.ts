@@ -4,6 +4,11 @@ import { AxiosResponse } from 'axios';
 
 class StrategyService {
   // eslint-disable-next-line class-methods-use-this
+  findAll(): Promise<AxiosResponse<StrategyInputDto[]>> {
+    return api.get(`/v1/strategy/findAll`);
+  }
+
+  // eslint-disable-next-line class-methods-use-this
   findById(uuid: string): Promise<AxiosResponse<any>> {
     return api.get(`/v1/strategy/${uuid}`);
   }

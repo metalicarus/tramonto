@@ -1,5 +1,6 @@
 package br.com.wsss.tramonto.controller.v1;
 
+import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,12 @@ public class StrategyController {
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<StrategyDto> findById(@PathVariable UUID strategyId) {
 		return ResponseEntity.ok(service.findById(strategyId));
+	}
+	
+	@GetMapping("/findAll")
+	@ResponseStatus(HttpStatus.OK)
+	public ResponseEntity<Set<StrategyDto>> findAll() {
+		return ResponseEntity.ok(service.findAll());
 	}
 	
 	@GetMapping

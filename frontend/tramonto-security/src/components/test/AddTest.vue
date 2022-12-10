@@ -36,6 +36,30 @@
                           @update="test.checklists = $event"
               />
             </q-step>
+            <q-step
+              :name="3"
+              title="Prepare"
+              icon="fas fa-cogs"
+              active-icon="edit"
+            >
+              <prepare-step v-if="strategies.length > 0 && tools.length > 0"
+                            :strategies="strategies"
+                            :tools="tools"
+                            @update-strategies="test.strategies = $event"
+                            @update-tools="test.tools = $event"
+              />
+            </q-step>
+            <q-step
+              :name="4"
+              title="Execution"
+              icon="fas fa-hourglass-half"
+              active-icon="edit"
+            >
+              <execution-step v-if="vectors.length > 0"
+                              :model="test"
+                              :vectors="vectors"
+              />
+            </q-step>
           </q-stepper>
         </q-tab-panel>
       </q-tab-panels>
@@ -54,17 +78,27 @@
 </template>
 
 <script lang="ts">
-import { onMounted, ref, toRaw } from 'vue';
+import { onMounted, ref } from 'vue';
 import Test from 'components/test/Test';
 import TestTypeService from 'src/services/testType.service';
 import { useQuasar } from 'quasar';
 import AdequacyStep from 'components/test/steps/AdequacyStep.vue';
 import CheckStep from 'components/test/steps/CheckStep.vue';
 import ChecklistService from 'src/services/Checklist.service';
+import PrepareStep from 'components/test/steps/PrepareStep.vue';
+import StrategySerivce from 'src/services/strategy.serivce';
+import StrategyInputDto from 'src/services/dtos/StrategyInput.dto';
+import { ToolDto } from 'src/services/dtos/Tool.dto';
+import ToolService from 'src/services/Tool.service';
+import ExecutionStep from 'components/test/steps/ExecutionStep.vue';
+import VectorCategoryDto from 'src/services/dtos/VectorCategory.dto';
+import VectorCategoryService from 'src/services/vectorCategory.service';
 
 export default {
   name: 'AddTest',
-  components: { CheckStep, AdequacyStep },
+  components: {
+    ExecutionStep, PrepareStep, CheckStep, AdequacyStep,
+  },
   props: {
     uuid: {
       type: String,
@@ -82,12 +116,84 @@ export default {
   setup() {
     const $q = useQuasar();
     const types = ref();
+    const strategyType: StrategyInputDto[] = [];
+    const vectorType: VectorCategoryDto[] = [];
+    const toolType: ToolDto[] = [];
+    const strategies = ref(strategyType);
+    const tools = ref(toolType);
+    const vectors = ref(vectorType);
     const checklists = ref([]);
     const test = ref(Test);
+    function findAllTools(): void {
+      $q.loading.show();
+      ToolService.findAll().then((response) => {
+        tools.value = response.data;
+      })
+        .catch((error) => {
+          $q.notify({
+            message: `[ERROR]: ${error.response.data.message}`,
+            color: 'negative',
+            multiLine: true,
+            actions: [
+              {
+                label: 'Reply',
+                color: 'yellow',
+              },
+            ],
+          });
+        })
+        .finally(() => {
+          $q.loading.hide();
+        });
+    }
+    function findAllVectors(): void {
+      $q.loading.show();
+      VectorCategoryService.findAll().then((response) => {
+        vectors.value = response.data;
+      })
+        .catch((error) => {
+          $q.notify({
+            message: `[ERROR]: ${error.response.data.message}`,
+            color: 'negative',
+            multiLine: true,
+            actions: [
+              {
+                label: 'Reply',
+                color: 'yellow',
+              },
+            ],
+          });
+        })
+        .finally(() => {
+          $q.loading.hide();
+        });
+    }
     function findAllChecklists(): void {
       $q.loading.show();
       ChecklistService.findAll().then((response) => {
         checklists.value = response.data;
+      })
+        .catch((error) => {
+          $q.notify({
+            message: `[ERROR]: ${error.response.data.message}`,
+            color: 'negative',
+            multiLine: true,
+            actions: [
+              {
+                label: 'Reply',
+                color: 'yellow',
+              },
+            ],
+          });
+        })
+        .finally(() => {
+          $q.loading.hide();
+        });
+    }
+    function findAllStrategies(): void {
+      $q.loading.show();
+      StrategySerivce.findAll().then((response) => {
+        strategies.value = response.data;
       })
         .catch((error) => {
           $q.notify({
@@ -129,8 +235,11 @@ export default {
         });
     }
     onMounted(() => {
+      findAllStrategies();
       findAllChecklists();
+      findAllVectors();
       findAllTypes();
+      findAllTools();
     });
     return {
       approaches: [
@@ -160,7 +269,10 @@ export default {
       types,
       test,
       checklists,
-      step: ref(2),
+      strategies,
+      vectors,
+      tools,
+      step: ref(4),
       tab: ref('tests'),
       save() {
         return 'oi';

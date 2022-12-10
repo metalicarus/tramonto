@@ -4,6 +4,11 @@ import VectorCategoryDto from 'src/services/dtos/VectorCategory.dto';
 
 class VectorCategoryService {
   // eslint-disable-next-line class-methods-use-this
+  findAll(): Promise<AxiosResponse<VectorCategoryDto[]>> {
+    return api.get('/v1/vectorCategory/findAll');
+  }
+
+  // eslint-disable-next-line class-methods-use-this
   findById(uuid: string): Promise<AxiosResponse<any>> {
     return api.get(`/v1/vectorCategory/${uuid}`);
   }

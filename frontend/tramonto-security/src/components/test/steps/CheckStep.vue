@@ -17,7 +17,9 @@
                    v-for="(item, itemIndex) in filterChecklistsByType(type)"
                    :key="itemIndex">
              <q-item-section side top>
-               <q-checkbox v-model="item.check" @update:model-value="selectChecklist" />
+               <q-checkbox v-model="item.check"
+                           @update:model-value="selectChecklist"
+               />
              </q-item-section>
              <q-item-section>
                <q-item-label>{{ item.checklist }}</q-item-label>
@@ -33,7 +35,7 @@
 </template>
 
 <script lang="ts">
-import { onMounted, ref, toRaw } from 'vue';
+import { onMounted, ref } from 'vue';
 
 export default {
   name: 'CheckStep',

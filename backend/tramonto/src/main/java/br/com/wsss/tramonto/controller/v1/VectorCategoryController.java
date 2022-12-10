@@ -1,5 +1,6 @@
 package br.com.wsss.tramonto.controller.v1;
 
+import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.wsss.tramonto.dto.input.StrategyDto;
 import br.com.wsss.tramonto.dto.input.VectorCategoryDto;
 import br.com.wsss.tramonto.dto.output.PageResponse;
 import br.com.wsss.tramonto.service.contract.BaseService;
@@ -39,6 +39,12 @@ public class VectorCategoryController {
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<VectorCategoryDto> findById(@PathVariable UUID vectorCategoryId) {
 		return ResponseEntity.ok(service.findById(vectorCategoryId));
+	}
+	
+	@GetMapping("/findAll")
+	@ResponseStatus(HttpStatus.OK)
+	public ResponseEntity<Set<VectorCategoryDto>> findAll() {
+		return ResponseEntity.ok(service.findAll());
 	}
 	
 	@GetMapping

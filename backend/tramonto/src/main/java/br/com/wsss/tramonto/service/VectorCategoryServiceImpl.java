@@ -5,6 +5,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -30,8 +31,11 @@ public class VectorCategoryServiceImpl implements BaseService<VectorCategoryDto,
 
 	@Override
 	public Set<VectorCategoryDto> findAll() {
-		// TODO Auto-generated method stub
-		return null;
+		VectorCategory entity = new VectorCategory();
+		entity.setStatus(Status.ACTIVE);
+		return repository.findAll(Example.of(entity)).stream().map(x -> {
+			return mapper.vectorCategoryToDto(x);
+		}).collect(Collectors.toSet());
 	}
 
 	@Override

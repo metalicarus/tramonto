@@ -19,9 +19,9 @@
               icon="fas fa-sliders-h"
             >
               <adequacy-step :model="test"
-                             :approaches="approaches"
-                             :aggression="aggression"
-                             :types="types"
+                             :approaches="approachStore.approaches"
+                             :aggression="aggressionStore.aggressions"
+                             :types="typeStore.testTypes"
               />
             </q-step>
             <q-step
@@ -30,8 +30,8 @@
               icon="fas fa-check-circle"
               active-icon="edit"
             >
-              <check-step v-if="checklists.length > 0"
-                          :checklists="checklists"
+              <check-step v-if="checklistStore.checklists.length > 0"
+                          :checklists="checklistStore.checklists"
                           :types="['REQUIRED', 'RELATED', 'CUSTOMIZED']"
                           @update="test.checklists = $event"
               />
@@ -42,9 +42,10 @@
               icon="fas fa-cogs"
               active-icon="edit"
             >
-              <prepare-step v-if="strategies.length > 0 && tools.length > 0"
-                            :strategies="strategies"
-                            :tools="tools"
+              <prepare-step v-if="strategyStore.strategies.length > 0
+                            && toolStore.testTools.length > 0"
+                            :strategies="strategyStore.strategies"
+                            :tools="toolStore.testTools"
                             @update-strategies="test.strategies = $event"
                             @update-tools="test.tools = $event"
               />
@@ -55,9 +56,9 @@
               icon="fas fa-hourglass-half"
               active-icon="edit"
             >
-              <execution-step v-if="vectors.length > 0"
+              <execution-step v-if="categoryStore.vectors.length > 0"
                               :model="test"
-                              :vectors="vectors"
+                              :vectors="categoryStore.vectors"
               />
             </q-step>
           </q-stepper>
@@ -79,20 +80,18 @@
 
 <script lang="ts">
 import { onMounted, ref } from 'vue';
-import Test from 'components/test/Test';
-import TestTypeService from 'src/services/testType.service';
-import { useQuasar } from 'quasar';
 import AdequacyStep from 'components/test/steps/AdequacyStep.vue';
 import CheckStep from 'components/test/steps/CheckStep.vue';
-import ChecklistService from 'src/services/Checklist.service';
 import PrepareStep from 'components/test/steps/PrepareStep.vue';
-import StrategySerivce from 'src/services/strategy.serivce';
-import StrategyInputDto from 'src/services/dtos/StrategyInput.dto';
-import { ToolDto } from 'src/services/dtos/Tool.dto';
-import ToolService from 'src/services/Tool.service';
 import ExecutionStep from 'components/test/steps/ExecutionStep.vue';
-import VectorCategoryDto from 'src/services/dtos/VectorCategory.dto';
-import VectorCategoryService from 'src/services/vectorCategory.service';
+import { useTestStore } from 'stores/test.store';
+import { useApproachStore } from 'stores/approach.store';
+import { useAggressionStore } from 'stores/aggression.store';
+import { useTypeStore } from 'stores/types.store';
+import { useToolStore } from 'stores/tool.store';
+import { useStrategyStore } from 'stores/strategy.store';
+import { useCategoryStore } from 'stores/category.store';
+import { useChecklistStore } from 'stores/checklist.store';
 
 export default {
   name: 'AddTest',
@@ -114,165 +113,31 @@ export default {
     },
   },
   setup() {
-    const $q = useQuasar();
-    const types = ref();
-    const strategyType: StrategyInputDto[] = [];
-    const vectorType: VectorCategoryDto[] = [];
-    const toolType: ToolDto[] = [];
-    const strategies = ref(strategyType);
-    const tools = ref(toolType);
-    const vectors = ref(vectorType);
-    const checklists = ref([]);
-    const test = ref(Test);
-    function findAllTools(): void {
-      $q.loading.show();
-      ToolService.findAll().then((response) => {
-        tools.value = response.data;
-      })
-        .catch((error) => {
-          $q.notify({
-            message: `[ERROR]: ${error.response.data.message}`,
-            color: 'negative',
-            multiLine: true,
-            actions: [
-              {
-                label: 'Reply',
-                color: 'yellow',
-              },
-            ],
-          });
-        })
-        .finally(() => {
-          $q.loading.hide();
-        });
-    }
-    function findAllVectors(): void {
-      $q.loading.show();
-      VectorCategoryService.findAll().then((response) => {
-        vectors.value = response.data;
-      })
-        .catch((error) => {
-          $q.notify({
-            message: `[ERROR]: ${error.response.data.message}`,
-            color: 'negative',
-            multiLine: true,
-            actions: [
-              {
-                label: 'Reply',
-                color: 'yellow',
-              },
-            ],
-          });
-        })
-        .finally(() => {
-          $q.loading.hide();
-        });
-    }
-    function findAllChecklists(): void {
-      $q.loading.show();
-      ChecklistService.findAll().then((response) => {
-        checklists.value = response.data;
-      })
-        .catch((error) => {
-          $q.notify({
-            message: `[ERROR]: ${error.response.data.message}`,
-            color: 'negative',
-            multiLine: true,
-            actions: [
-              {
-                label: 'Reply',
-                color: 'yellow',
-              },
-            ],
-          });
-        })
-        .finally(() => {
-          $q.loading.hide();
-        });
-    }
-    function findAllStrategies(): void {
-      $q.loading.show();
-      StrategySerivce.findAll().then((response) => {
-        strategies.value = response.data;
-      })
-        .catch((error) => {
-          $q.notify({
-            message: `[ERROR]: ${error.response.data.message}`,
-            color: 'negative',
-            multiLine: true,
-            actions: [
-              {
-                label: 'Reply',
-                color: 'yellow',
-              },
-            ],
-          });
-        })
-        .finally(() => {
-          $q.loading.hide();
-        });
-    }
-    function findAllTypes(): void {
-      $q.loading.show();
-      TestTypeService.findAll().then((response) => {
-        types.value = response.data;
-      })
-        .catch((error) => {
-          $q.notify({
-            message: `[ERROR]: ${error.response.data.message}`,
-            color: 'negative',
-            multiLine: true,
-            actions: [
-              {
-                label: 'Reply',
-                color: 'yellow',
-              },
-            ],
-          });
-        })
-        .finally(() => {
-          $q.loading.hide();
-        });
-    }
+    const $testStore = useTestStore();
+    const $approachStore = useApproachStore();
+    const $aggressionStore = useAggressionStore();
+    const $strategyStore = useStrategyStore();
+    const $categoryStore = useCategoryStore();
+    const $typeStore = useTypeStore();
+    const $toolStore = useToolStore();
+    const $checklistStore = useChecklistStore();
     onMounted(() => {
-      findAllStrategies();
-      findAllChecklists();
-      findAllVectors();
-      findAllTypes();
-      findAllTools();
+      $strategyStore.findAllStrategies();
+      $checklistStore.findAllChecklists();
+      $categoryStore.findAllCategoryVectors();
+      $typeStore.findAllTypes();
+      $toolStore.findAllTools();
     });
     return {
-      approaches: [
-        {
-          label: 'Covert',
-          value: 'COVERT',
-        },
-        {
-          label: 'Overt',
-          value: 'OVERT',
-        },
-      ],
-      aggression: [
-        {
-          label: 'High',
-          value: 'HIGH',
-        },
-        {
-          label: 'Medium',
-          value: 'MEDIUM',
-        },
-        {
-          label: 'Low',
-          value: 'LOW',
-        },
-      ],
-      types,
-      test,
-      checklists,
-      strategies,
-      vectors,
-      tools,
-      step: ref(4),
+      aggressionStore: $aggressionStore,
+      checklistStore: $checklistStore,
+      categoryStore: $categoryStore,
+      approachStore: $approachStore,
+      strategyStore: $strategyStore,
+      toolStore: $toolStore,
+      typeStore: $typeStore,
+      test: $testStore.test,
+      step: ref(1),
       tab: ref('tests'),
       save() {
         return 'oi';

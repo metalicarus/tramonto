@@ -7,28 +7,30 @@
             <div class="col-12 col-md-8">
               {{ `${index + 1}º Vector: ${item.title}` }}
             </div>
-            <div class="col-12 col-md-2 q-gutter-sm">
-              <q-btn v-if="test.vectors.length > 1"
-                     size="small"
-                     icon="fa fa-remove"
-                     outline
-                     color="red"
-                     @click="test.removeVector(index)"
-              />
-              <q-btn size="small"
-                     icon="fa fa-plus"
-                     outline
-                     color="green"
-                     @click="test.addVector()"
-              />
-            </div>
           </div>
 
         </q-item-section>
       </template>
       <div class="row q-gutter-md">
+        <div class="col-12 col-md-2 q-gutter-sm">
+          <q-btn v-if="test.vectors.length > 1"
+                 size="small"
+                 icon="fa fa-remove"
+                 outline
+                 color="red"
+                 @click="test.removeVector(index)"
+          />
+          <q-btn size="small"
+                 icon="fa fa-plus"
+                 outline
+                 color="green"
+                 @click="test.addVector()"
+          />
+        </div>
+      </div>
+      <div class="row q-gutter-md">
         <div class="col-12">
-          <q-input v-model="item.title"
+          <q-input v-model="storeTest.verdade"
                    label="Title"
                    stack-label
                    outlined
@@ -109,6 +111,7 @@
 import VectorCategoryDto from 'src/services/dtos/VectorCategory.dto';
 import { PropType, toRef } from 'vue';
 import Test from 'components/test/Test';
+import { useTestStore } from 'stores/test.store';
 
 const props = defineProps({
   vectors: {
@@ -120,6 +123,7 @@ const props = defineProps({
     required: true,
   },
 });
+const storeTest = useTestStore().test;
 
 const test = toRef(props, 'model');
 

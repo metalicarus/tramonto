@@ -2,12 +2,12 @@ import { defineStore } from 'pinia';
 import { useQuasar } from 'quasar';
 import ChecklistService from 'src/services/Checklist.service';
 import { ref, Ref } from 'vue';
-import ChecklistDto from 'src/services/dtos/Checklist.dto';
+import { Checklist } from 'stores/dtos/Checklist.dto';
 
 export const useChecklistStore = defineStore('checklists', () => {
   // state
   const $q = useQuasar();
-  const checklists: Ref<ChecklistDto[]> = ref([]);
+  const checklists: Ref<Checklist[]> = ref([]);
   // actions
   const findAllChecklists = () => {
     $q.loading.show();

@@ -1,10 +1,10 @@
 import { date } from 'quasar';
 import StrategyInputDto from 'src/services/dtos/StrategyInput.dto';
 import { ToolDto } from 'src/services/dtos/Tool.dto';
+import TestDto from 'src/services/dtos/Test.dto';
+import { TestObjective } from 'stores/dtos/TestObjective.dto';
+import { TestChecklist } from 'stores/dtos/TestChecklist.dto';
 
-export class TestChecklist {
-  uuidChecklist = '';
-}
 export class VectorCateogry {
   id = '';
 
@@ -37,14 +37,9 @@ export class TestVector {
 
   updatedAt = '';
 }
-export class TestObjective {
-  uuid = '';
 
-  objective = '';
-}
-
-class Test {
-  uuid = '';
+class Test implements TestDto {
+  id = '';
 
   title = '';
 
@@ -88,6 +83,11 @@ class Test {
 
   formatInitialAndFinalDate(): string {
     return `From: ${this.initialAndFinalDate.from} To: ${this.initialAndFinalDate.to}`;
+  }
+
+  updateDates(): void {
+    this.initialDate = date.formatDate(this.initialAndFinalDate.from, 'YYYY-MM-DDTHH:mm:ss');
+    this.finalDate = date.formatDate(this.initialAndFinalDate.to, 'YYYY-MM-DDTHH:mm:ss');
   }
 
   addObjective(): void {

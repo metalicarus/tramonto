@@ -1,6 +1,8 @@
 package br.com.wsss.tramonto.dto.input;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -30,6 +32,8 @@ public class TestDto extends BaseDto {
 	private String aggression;
 	private String generalObservation;
 	private TestTypeDto type;
+	private List<ChecklistDto> checklists = new ArrayList<>();
+	private List<TestObjectiveDto> objectives = new ArrayList<>();
 	
 	
 	@Getter

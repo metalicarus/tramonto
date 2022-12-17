@@ -1,10 +1,10 @@
 import { AxiosResponse } from 'axios';
 import { api } from 'boot/axios';
-import ChecklistDto from 'src/services/dtos/Checklist.dto';
+import { Checklist } from 'stores/dtos/Checklist.dto';
 
 class ChecklistService {
   // eslint-disable-next-line class-methods-use-this
-  findAll(): Promise<AxiosResponse<ChecklistDto[]>> {
+  findAll(): Promise<AxiosResponse<Checklist[]>> {
     return api.get('/v1/checklist/findAll');
   }
 
@@ -14,7 +14,7 @@ class ChecklistService {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  save: (strategy: ChecklistDto) => Promise<AxiosResponse<any>> = (checklist: ChecklistDto) => api.put('/v1/checklist', checklist);
+  save: (strategy: Checklist) => Promise<AxiosResponse<any>> = (checklist: Checklist) => api.put('/v1/checklist', checklist);
 
   // eslint-disable-next-line class-methods-use-this
   paginate(

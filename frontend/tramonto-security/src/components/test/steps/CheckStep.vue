@@ -35,7 +35,9 @@
 </template>
 
 <script lang="ts">
-import { onMounted, ref } from 'vue';
+import { onMounted, PropType, ref } from 'vue';
+import { TestChecklist } from 'stores/dtos/TestChecklist.dto';
+import { Checklist } from 'stores/dtos/Checklist.dto';
 
 export default {
   name: 'CheckStep',
@@ -45,7 +47,7 @@ export default {
       required: true,
     },
     checklists: {
-      type: Array,
+      type: Array as PropType<Array<Checklist>>,
       required: true,
     },
   },
@@ -59,7 +61,13 @@ export default {
       return props.checklists.find((x: { type: string; }) => x.type === type);
     }
     function selectChecklist() {
-      ctx.emit('update', copyChecklists.value.filter((x: { check: boolean; }) => x.check));
+      const result: TestChecklist[] = [];
+      copyChecklists.value.filter((x: { check: boolean; }) => x.check).forEach((x: Checklist) => {
+        const tcl = new TestChecklist();
+        tcl.pk.checklist = x;
+        result.push(tcl);
+      });
+      ctx.emit('update', result);
     }
     function setFalseInChecklists() {
       copyChecklists.value.forEach((x: { check: boolean; }) => {

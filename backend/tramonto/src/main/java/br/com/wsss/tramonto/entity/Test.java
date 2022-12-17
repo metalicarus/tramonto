@@ -1,6 +1,8 @@
 package br.com.wsss.tramonto.entity;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -9,10 +11,13 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import br.com.wsss.tramonto.domain.type.TestAggression;
 import br.com.wsss.tramonto.domain.type.TestApproach;
@@ -67,5 +72,12 @@ public class Test extends BaseEntity {
     @OneToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
     @JoinColumn(name = "TYPE", referencedColumnName = "ID", nullable = false)
 	private TestType type;
+    
+    @JsonManagedReference
+    @OneToMany(mappedBy = "pk.test")
+    private List<TestChecklist> checklists = new ArrayList<>();
+    
+    @OneToMany(mappedBy = "test", orphanRemoval = true)
+    private List<TestObjective> objectives = new ArrayList<>();
 	
 }

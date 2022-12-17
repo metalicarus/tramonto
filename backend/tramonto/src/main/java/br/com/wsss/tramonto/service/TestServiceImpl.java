@@ -5,6 +5,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,11 +19,19 @@ import br.com.wsss.tramonto.dto.input.TestDto;
 import br.com.wsss.tramonto.dto.output.PageResponse;
 import br.com.wsss.tramonto.entity.Test;
 import br.com.wsss.tramonto.mapper.contract.TestMapper;
+import br.com.wsss.tramonto.repository.contract.jpa.TestChecklistRepository;
+import br.com.wsss.tramonto.repository.contract.jpa.TestObjectiveRepository;
 import br.com.wsss.tramonto.repository.contract.jpa.TestRepository;
 import br.com.wsss.tramonto.service.contract.TestService;
 
 @Service
 public class TestServiceImpl implements TestService {
+	
+	@Autowired
+	private TestChecklistRepository checklistRepository;
+	
+	@Autowired
+	private TestObjectiveRepository objetiveRepository;
 
 	@Autowired
 	private TestRepository repository;
@@ -46,14 +56,26 @@ public class TestServiceImpl implements TestService {
 		return null;
 	}
 
+	@Transactional
 	@Override
 	public TestDto save(TestDto dto) {
 		Test entity = mapper.testDtoToTest(dto);
+		entity.setStatus(Status.ACTIVE);
 		String identifier = "TR" + String.format("%8s", repository.count() + 1).replace(' ', '0');
 		entity.setIdentifier(identifier);
 		if (entity.getInitialDate() == null)
 			entity.setInitialDate(new Date());
-		return mapper.testToTestDto(repository.save(entity));
+		repository.save(entity);
+		entity.getObjectives().forEach(x -> {
+			x.setStatus(Status.ACTIVE);
+			x.setTest(entity);
+			x = objetiveRepository.save(x);
+		});
+		entity.getChecklists().forEach(x -> {
+			x.getPk().setTest(entity);
+			x = checklistRepository.save(x);
+		});
+		return mapper.testToTestDto(entity);
 	}
 	
 	@Override

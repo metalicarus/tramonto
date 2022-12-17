@@ -4,15 +4,19 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 import br.com.wsss.tramonto.dto.input.TestDto;
-import br.com.wsss.tramonto.dto.input.TestTypeDto;
 import br.com.wsss.tramonto.entity.Test;
+import br.com.wsss.tramonto.mapper.contract.pk.TestChecklistPkMapper;
 
-@Mapper(componentModel = "spring", uses = {TestTypeDto.class})
-public interface TestMapper extends BaseMapper<TestDto, Test>{
+@Mapper(componentModel = "spring", uses = { TestChecklistPkMapper.class, ChecklistMapper.class,
+		TestObjectiveMapper.class })
+public interface TestMapper {
+
+	@Mapping(source = "checklists", target = "checklists")
 	TestDto testToTestDto(Test entity);
-	Test testDtoToTest(TestDto dto);
-	
+
 	@Mapping(source = "type", ignore = true, target = "type")
 	TestDto toPage(Test entity);
 
+	@Mapping(source = "checklists", target = "checklists")
+	Test testDtoToTest(TestDto dto);
 }

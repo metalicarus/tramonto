@@ -2,7 +2,7 @@
    <div class=" q-gutter-md">
       <div class="row q-gutter-md">
         <div class="col-12 col-md-3">
-          <q-input v-model="test.uuid"
+          <q-input v-model="test.id"
                    :disable="true"
                    outlined
                    stack-label
@@ -66,7 +66,9 @@
             <template v-slot:append>
               <q-icon name="event" class="cursor-pointer">
                 <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                  <q-date v-model="test.initialAndFinalDate" range>
+                  <q-date v-model="test.initialAndFinalDate"
+                          range
+                          @update:model-value="test.updateDates()">
                     <div class="row items-center justify-end">
                       <q-btn v-close-popup label="Close" color="primary" flat />
                     </div>
@@ -78,7 +80,7 @@
         </div>
         <div class="col-12 col-md-2">
           <q-input v-model="test.estimatedTime"
-                   type="date"
+                   mask="##:##:##"
                    outlined
                    label="Estimated Time"
                    stack-label

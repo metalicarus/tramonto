@@ -1,5 +1,5 @@
 <template>
-  <q-form flat @submit="save">
+  <q-form ref="form" flat @submit="testStore.save()">
       <q-tabs
         v-model="tab"
         dense
@@ -7,16 +7,25 @@
         indicator-color="primary"
         align="justify"
       >
-        <q-tab name="tests" label="Testes" />
-        <q-tab name="annotations" label="Anotações" />
+        <q-tab name="tests" label="Tests" />
+        <q-tab name="annotations" label="Notes" />
       </q-tabs>
       <q-tab-panels v-model="tab" animated>
         <q-tab-panel name="tests">
-          <q-stepper :model-value="step" active-color="primary" :header-nav="false" animated flat>
+          <q-stepper v-model="step"
+                     active-color="primary"
+                     header-nav
+                     animated
+                     error-color="red"
+                     flat
+                     @before-transition="validateStep"
+          >
             <q-step
-              :name="1"
-              title="Adequacy"
-              icon="fas fa-sliders-h"
+              :name="steps.step1.name"
+              :title="steps.step1.title"
+              :icon="steps.step1.icon"
+              :error="steps.step1.error"
+              :active-icon="steps.step1.activeIcon"
             >
               <adequacy-step :model="test"
                              :approaches="approachStore.approaches"
@@ -26,9 +35,9 @@
             </q-step>
             <q-step
               :name="2"
-              title="Verificação"
-              icon="fas fa-check-circle"
-              active-icon="edit"
+              :title="steps.step2.title"
+              :icon="steps.step2.icon"
+              :active-icon="steps.step2.activeIcon"
             >
               <check-step v-if="checklistStore.checklists.length > 0"
                           :checklists="checklistStore.checklists"
@@ -38,9 +47,9 @@
             </q-step>
             <q-step
               :name="3"
-              title="Prepare"
-              icon="fas fa-cogs"
-              active-icon="edit"
+              :title="steps.step3.title"
+              :icon="steps.step3.icon"
+              :active-icon="steps.step3.activeIcon"
             >
               <prepare-step v-if="strategyStore.strategies.length > 0
                             && toolStore.testTools.length > 0"
@@ -52,9 +61,9 @@
             </q-step>
             <q-step
               :name="4"
-              title="Execution"
-              icon="fas fa-hourglass-half"
-              active-icon="edit"
+              :title="steps.step4.title"
+              :icon="steps.step4.icon"
+              :active-icon="steps.step4.activeIcon"
             >
               <execution-step v-if="categoryStore.vectors.length > 0"
                               :model="test"
@@ -79,7 +88,6 @@
 </template>
 
 <script lang="ts">
-import { onMounted, ref } from 'vue';
 import AdequacyStep from 'components/test/steps/AdequacyStep.vue';
 import CheckStep from 'components/test/steps/CheckStep.vue';
 import PrepareStep from 'components/test/steps/PrepareStep.vue';
@@ -92,6 +100,7 @@ import { useToolStore } from 'stores/tool.store';
 import { useStrategyStore } from 'stores/strategy.store';
 import { useCategoryStore } from 'stores/category.store';
 import { useChecklistStore } from 'stores/checklist.store';
+import { onMounted, ref } from 'vue';
 
 export default {
   name: 'AddTest',
@@ -113,6 +122,37 @@ export default {
     },
   },
   setup() {
+    const steps = ref({
+      step1: {
+        name: 1,
+        title: 'Adequacy',
+        icon: 'fas fa-sliders-h',
+        activeIcon: 'edit',
+        error: false,
+      },
+      step2: {
+        name: 2,
+        title: 'Checking',
+        icon: 'fas fa-check-circle',
+        activeIcon: 'edit',
+        error: false,
+      },
+      step3: {
+        name: 3,
+        title: 'Prepare',
+        icon: 'fas fa-cogs',
+        activeIcon: 'edit',
+        error: false,
+      },
+      step4: {
+        name: 5,
+        title: 'Execution',
+        icon: 'fas fa-hourglass-half',
+        activeIcon: 'edit',
+        error: false,
+      },
+    });
+    const form = ref(null);
     const $testStore = useTestStore();
     const $approachStore = useApproachStore();
     const $aggressionStore = useAggressionStore();
@@ -121,6 +161,14 @@ export default {
     const $typeStore = useTypeStore();
     const $toolStore = useToolStore();
     const $checklistStore = useChecklistStore();
+    const validateStep = (newVal: never, oldVal: never) => {
+      form.value.validate().then((response: never) => {
+        if (oldVal === steps.value.step1.name) steps.value.step1.error = !response;
+        if (oldVal === steps.value.step2.name) steps.value.step2.error = !response;
+        if (oldVal === steps.value.step3.name) steps.value.step3.error = !response;
+        if (oldVal === steps.value.step4.name) steps.value.step4.error = !response;
+      });
+    };
     onMounted(() => {
       $strategyStore.findAllStrategies();
       $checklistStore.findAllChecklists();
@@ -129,19 +177,20 @@ export default {
       $toolStore.findAllTools();
     });
     return {
+      validateStep,
+      steps,
+      form,
       aggressionStore: $aggressionStore,
       checklistStore: $checklistStore,
       categoryStore: $categoryStore,
       approachStore: $approachStore,
       strategyStore: $strategyStore,
+      testStore: $testStore,
       toolStore: $toolStore,
       typeStore: $typeStore,
       test: $testStore.test,
       step: ref(1),
       tab: ref('tests'),
-      save() {
-        return 'oi';
-      },
     };
   },
 };

@@ -2,36 +2,31 @@
   <q-input
     outlined
     dense
-    v-model="text"
+    v-model="$store.filter"
     debounce="300"
+    :disable="$store.disableFilter"
     placeholder="Search">
     <template v-slot:after>
-      <q-btn outline @click="setText">
+      <q-btn outline @click="setFilter">
         <q-icon name="search" />
       </q-btn>
     </template>
   </q-input>
 </template>
 
-<script lang="ts">
-import { ref } from 'vue';
-import QueryStringReplace from 'src/utils/QueryStringReplace.vue';
+<script lang="ts" setup>
+import { usePaginationStore } from 'stores/paginate.store';
+import { onMounted } from 'vue';
 
-export default {
-  name: 'UrlFilter',
-  setup(props: any, ctx: any) {
-    const text = ref('');
-    const { replaceParam } = QueryStringReplace.setup();
-    function setText() {
-      replaceParam('filter', text.value);
-      ctx.emit('update', text.value);
-    }
-    return {
-      text,
-      setText,
-    };
-  },
+const $store = usePaginationStore();
+const emit = defineEmits(['update']);
+const setFilter = () => {
+  $store.setFilter($store.filter);
+  emit('update', $store.filter);
 };
+onMounted(() => {
+  $store.touchFilter();
+});
 </script>
 
 <style scoped>

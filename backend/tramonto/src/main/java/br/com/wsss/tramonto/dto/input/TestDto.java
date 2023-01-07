@@ -2,7 +2,9 @@ package br.com.wsss.tramonto.dto.input;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -25,15 +27,18 @@ public class TestDto extends BaseDto {
 	private Date estimatedTime;
 	
 	private boolean retest;
+	
+	@JsonFormat(pattern="yyyy-MM-dd")
 	private Date retestDate;
+	
 	private String title;
 	private String description;
 	private String approach;
 	private String aggression;
 	private String generalObservation;
 	private TestTypeDto type;
-	private List<ChecklistDto> checklists = new ArrayList<>();
-	private List<TestObjectiveDto> objectives = new ArrayList<>();
+	private Set<ChecklistDto> checklists = new HashSet<>();
+	private Set<TestObjectiveDto> objectives = new HashSet<>();
 	
 	
 	@Getter

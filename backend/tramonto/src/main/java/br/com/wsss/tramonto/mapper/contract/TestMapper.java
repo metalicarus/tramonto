@@ -13,10 +13,12 @@ public interface TestMapper {
 
 	@Mapping(source = "checklists", target = "checklists")
 	TestDto testToTestDto(Test entity);
-
-	@Mapping(source = "type", ignore = true, target = "type")
-	TestDto toPage(Test entity);
-
+	
 	@Mapping(source = "checklists", target = "checklists")
 	Test testDtoToTest(TestDto dto);
+
+	@Mapping(source = "type", ignore = true, target = "type")
+	@Mapping(source = "objectives", ignore = true, target = "objectives")
+	@Mapping(source = "checklists", ignore = true, target = "checklists")
+	TestDto toPage(Test entity);
 }

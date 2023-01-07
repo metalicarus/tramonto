@@ -27,11 +27,16 @@ public class TestController {
 	@Autowired
 	private TestService service;
 
-	@PutMapping
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	public ResponseEntity<TestDto> save(@RequestBody TestDto dto) {
 		return ResponseEntity.ok(service.save(dto));
+	}
+	
+	@PutMapping
+	@ResponseStatus(HttpStatus.OK)
+	public ResponseEntity<TestDto> update(@RequestBody TestDto dto) {
+		return ResponseEntity.ok(service.update(dto));
 	}
 
 	@GetMapping

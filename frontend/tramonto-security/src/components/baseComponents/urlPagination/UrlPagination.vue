@@ -2,8 +2,9 @@
   <div class="row justify-center q-mt-md">
     <q-pagination
       :model-value="page"
+      @update:model-value="setPage"
       :max="totalPages"
-      @update:model-value="setCurrentPage"
+      :disable="disable"
       color="primary"
       size="sm"
     />
@@ -11,8 +12,8 @@
 </template>
 
 <script lang="ts">
-import { ref } from 'vue';
-import QueryStringReplace from 'src/utils/QueryStringReplace.vue';
+import { usePaginationStore } from 'stores/paginate.store';
+import { onMounted, toRef } from 'vue';
 
 export default {
   name: 'UrlPagination',
@@ -24,16 +25,18 @@ export default {
   },
   emits: ['update'],
   setup(props: never, ctx: { emit: (arg0: string, arg1: number) => void; }) {
-    const page = ref(1);
-    const { replaceParam } = QueryStringReplace.setup();
-    function setCurrentPage(newPage: number): void {
-      page.value = newPage;
-      ctx.emit('update', newPage - 1);
-      replaceParam('page', newPage - 1);
-    }
+    const $store = usePaginationStore();
+    const setPage = (value: number) => {
+      $store.setPage(value);
+      ctx.emit('update', value);
+    };
+    onMounted(() => {
+      $store.touchPage();
+    });
     return {
-      setCurrentPage,
-      page,
+      page: toRef($store, 'page'),
+      disable: toRef($store, 'disablePage'),
+      setPage,
     };
   },
 };

@@ -42,7 +42,7 @@ import EssentialLink, {
 } from 'components/EssentialLink.vue';
 import {
   CHECKLISTS_ICON, CHECKLISTS_PAGINATE,
-  STRATEGIES_PAGINATE, TESTS_ICON, TESTS_SAVE, VECTORS_CATEGORIES_PAGINATE,
+  STRATEGIES_PAGINATE, TESTS_ICON, TESTS_PAGINATE, VECTORS_CATEGORIES_PAGINATE,
 } from 'src/consts/RoutesConsts';
 import { CHECKLISTS } from 'src/consts/LabelsConsts';
 
@@ -69,7 +69,7 @@ const essentialLinks: EssentialLinkProps[] = [
     title: 'Tests',
     caption: 'Tests for Tramonto',
     icon: TESTS_ICON,
-    link: `#${TESTS_SAVE}`,
+    link: `#${TESTS_PAGINATE}`,
   },
 ];
 

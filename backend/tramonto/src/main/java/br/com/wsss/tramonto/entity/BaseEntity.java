@@ -46,4 +46,8 @@ public class BaseEntity {
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "UPDATED_AT")
 	protected Date updatedAt;
+	
+	public BaseEntity() {
+		status = Status.ACTIVE;
+	}
 }

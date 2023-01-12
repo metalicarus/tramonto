@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,18 +28,21 @@ public class TestController {
 	@Autowired
 	private TestService service;
 
+    @PreAuthorize("hasAnyRole('TESTER_INTERMEDIARY', 'TESTER_ADVANCED')")
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	public ResponseEntity<TestDto> save(@RequestBody TestDto dto) {
 		return ResponseEntity.ok(service.save(dto));
 	}
 	
+    @PreAuthorize("hasAnyRole('TESTER_INTERMEDIARY', 'TESTER_ADVANCED')")
 	@PutMapping
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<TestDto> update(@RequestBody TestDto dto) {
 		return ResponseEntity.ok(service.update(dto));
 	}
 
+    @PreAuthorize("hasAnyRole('TESTER_BASIC', 'TESTER_INTERMEDIARY', 'TESTER_ADVANCED')")
 	@GetMapping
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<PageResponse<TestDto>> paginate(@RequestParam("filter") String filter, @RequestParam("page") Integer page,
@@ -48,6 +52,7 @@ public class TestController {
 		return ResponseEntity.ok(service.paginate(filter, page, perPage, sortBy, Direction.fromString(direction)));
 	}
 	
+    @PreAuthorize("hasAnyRole('TESTER_BASIC', 'TESTER_INTERMEDIARY', 'TESTER_ADVANCED')")
 	@GetMapping("{testId}")
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<TestDto> find(@PathVariable UUID testId) {

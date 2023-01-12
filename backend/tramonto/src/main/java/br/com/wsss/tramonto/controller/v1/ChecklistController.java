@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,13 +29,15 @@ public class ChecklistController {
 	@Autowired
 	private BaseService<ChecklistDto, UUID> service;
 	
+    @PreAuthorize("hasAnyRole('TESTER_ADVANCED')")
 	@PutMapping
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	public ResponseEntity<ChecklistDto> save(@RequestBody ChecklistDto dto) {
 		return ResponseEntity.ok(service.save(dto));
 	}
-	
+    
+    @PreAuthorize("hasAnyRole('TESTER_ADVANCED')")
 	@GetMapping("{checklistId}")
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<ChecklistDto> findById(@PathVariable UUID checklistId) {
@@ -47,6 +50,7 @@ public class ChecklistController {
 		return ResponseEntity.ok(service.findAll());
 	}
 	
+    @PreAuthorize("hasAnyRole('TESTER_ADVANCED')")
 	@GetMapping
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<PageResponse<ChecklistDto>> paginate(@RequestParam("filter") String filter, @RequestParam("page") Integer page,

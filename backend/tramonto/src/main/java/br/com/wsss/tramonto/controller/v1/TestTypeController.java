@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,6 +26,7 @@ public class TestTypeController {
 	@Autowired
 	private TestTypeService service;
 	
+    @PreAuthorize("hasAnyRole('TESTER_ADVANCED')")
 	@PutMapping
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
@@ -32,12 +34,14 @@ public class TestTypeController {
 		return ResponseEntity.ok(service.save(dto));
 	}
 	
+    @PreAuthorize("hasAnyRole('TESTER_ADVANCED')")
 	@GetMapping("{testTypeId}")
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<TestTypeDto> find(@PathVariable UUID testTypeId) {
 		return ResponseEntity.ok(service.findById(testTypeId));
 	}
-	
+    
+    @PreAuthorize("hasAnyRole('TESTER_ADVANCED')")
 	@GetMapping
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<Set<TestTypeDto>> findAll() {

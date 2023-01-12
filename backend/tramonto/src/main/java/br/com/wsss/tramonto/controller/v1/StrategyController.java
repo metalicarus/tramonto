@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,6 +29,7 @@ public class StrategyController {
 	@Autowired
 	private StrategyService service;
 	
+    @PreAuthorize("hasAnyRole('TESTER_ADVANCED')")
 	@PutMapping
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
@@ -35,18 +37,21 @@ public class StrategyController {
 		return ResponseEntity.ok(service.save(dto));
 	}
 	
+    @PreAuthorize("hasAnyRole('TESTER_ADVANCED')")
 	@GetMapping("{strategyId}")
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<StrategyDto> findById(@PathVariable UUID strategyId) {
 		return ResponseEntity.ok(service.findById(strategyId));
 	}
-	
+    
+    @PreAuthorize("hasAnyRole('TESTER_ADVANCED')")
 	@GetMapping("/findAll")
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<Set<StrategyDto>> findAll() {
 		return ResponseEntity.ok(service.findAll());
 	}
 	
+    @PreAuthorize("hasAnyRole('TESTER_ADVANCED')")
 	@GetMapping
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<PageResponse<StrategyDto>> paginate(@RequestParam("filter") String filter, @RequestParam("page") Integer page,

@@ -1,7 +1,6 @@
 package br.com.wsss.tramonto.service;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -21,20 +20,12 @@ import br.com.wsss.tramonto.dto.input.TestDto;
 import br.com.wsss.tramonto.dto.output.PageResponse;
 import br.com.wsss.tramonto.entity.Test;
 import br.com.wsss.tramonto.mapper.contract.TestMapper;
-import br.com.wsss.tramonto.repository.contract.jpa.TestChecklistRepository;
-import br.com.wsss.tramonto.repository.contract.jpa.TestObjectiveRepository;
 import br.com.wsss.tramonto.repository.contract.jpa.TestRepository;
 import br.com.wsss.tramonto.service.contract.TestService;
 
 @Service
 public class TestServiceImpl implements TestService {
-
-	@Autowired
-	private TestChecklistRepository checklistRepository;
-
-	@Autowired
-	private TestObjectiveRepository objetiveRepository;
-
+	
 	@Autowired
 	private TestRepository repository;
 
@@ -55,43 +46,23 @@ public class TestServiceImpl implements TestService {
 	@Transactional
 	@Override
 	public TestDto update(TestDto dto) {
-		Test externalEntity = mapper.testDtoToTest(dto);
-		repository.deleteAllObjectives(externalEntity.getId());
-		repository.deleteAllChecklists(externalEntity.getId());
-		Test databaseEntity = repository.findById(externalEntity.getId()).get();
-		databaseEntity.setStatus(externalEntity.getStatus());
-		databaseEntity.setInitialDate(externalEntity.getInitialDate());
-		databaseEntity.setFinalDate(externalEntity.getFinalDate());
-		databaseEntity.setEstimatedTime(externalEntity.getEstimatedTime());
-		databaseEntity.setRetest(externalEntity.isRetest());
-		databaseEntity.setRetestDate(externalEntity.getRetestDate());
-		databaseEntity.setTitle(externalEntity.getTitle());
-		databaseEntity.setDescription(externalEntity.getDescription());
-		databaseEntity.setApproach(externalEntity.getApproach());
-		databaseEntity.setAggression(externalEntity.getAggression());
-		databaseEntity.setGeneralObservation(externalEntity.getGeneralObservation());
-		databaseEntity.setChecklists(externalEntity.getChecklists());
-		databaseEntity.addObjectives(externalEntity.getObjectives());
-		repository.save(databaseEntity);
-		return mapper.testToTestDto(externalEntity);
+		Test externalEntity = mapper.testDtoToTest(dto);		
+		externalEntity.preUpdate();		
+		repository.save(externalEntity);
+		return mapper.testToTestDto(externalEntity); 
 	}
 
 	@Transactional
 	@Override
 	public TestDto save(TestDto dto) {
 		Test entity = mapper.testDtoToTest(dto);
-		if (entity.getIdentifier().isEmpty()) {
-			entity.setStatus(Status.ACTIVE);
-			String identifier = "TR" + String.format("%8s", repository.count() + 1).replace(' ', '0');
-			entity.setIdentifier(identifier);
-		}
+		entity.setStatus(Status.ACTIVE);
+		String identifier = "TR" + String.format("%8s", repository.count() + 1).replace(' ', '0');
+		entity.setIdentifier(identifier);
 		if (entity.getInitialDate() == null)
 			entity.setInitialDate(new Date());
-		Test dbEntity = repository.findById(entity.getId()).get();
-		dbEntity.getChecklists().clear();
-		dbEntity.setChecklists(entity.getChecklists());
-		repository.save(dbEntity);
-		return mapper.testToTestDto(dbEntity);
+		repository.save(entity);
+		return mapper.testToTestDto(entity);
 	}
 
 	@Override
@@ -109,5 +80,6 @@ public class TestServiceImpl implements TestService {
 		// TODO Auto-generated method stub
 
 	}
+	
 
 }

@@ -36,7 +36,6 @@
 
 <script lang="ts">
 import { onMounted, PropType, ref } from 'vue';
-import { TestChecklist } from 'stores/dtos/TestChecklist.dto';
 import { Checklist } from 'stores/dtos/Checklist.dto';
 
 export default {
@@ -61,17 +60,11 @@ export default {
       return props.checklists.find((x: { type: string; }) => x.type === type);
     }
     function selectChecklist() {
-      const result: TestChecklist[] = [];
-      copyChecklists.value.filter((x: { check: boolean; }) => x.check).forEach((x: Checklist) => {
-        const tcl = new TestChecklist();
-        tcl.pk.checklist = x;
-        result.push(tcl);
-      });
-      ctx.emit('update', result);
+      ctx.emit('update', copyChecklists.value.filter((x: { check: boolean; }) => x.check));
     }
     function setFalseInChecklists() {
       copyChecklists.value.forEach((x: { check: boolean; }) => {
-        x.check = false;
+        if (!x.check) { x.check = false; }
       });
     }
     onMounted(() => {

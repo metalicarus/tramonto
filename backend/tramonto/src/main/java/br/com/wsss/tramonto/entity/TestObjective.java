@@ -26,10 +26,10 @@ public class TestObjective extends BaseEntity {
 	@Override
 	public boolean equals(Object o) {
 		TestObjective to = (TestObjective) o;
-		
+
 		if (test == null)
 			return objective.equals(to.getObjective());
-		
+
 		return objective.equals(to.getObjective()) && test.getId().equals(to.getTest().getId());
 	}
 

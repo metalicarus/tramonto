@@ -3,7 +3,7 @@ import StrategyInputDto from 'src/services/dtos/StrategyInput.dto';
 import { ToolDto } from 'src/services/dtos/Tool.dto';
 import TestDto from 'src/services/dtos/Test.dto';
 import { TestObjective } from 'stores/dtos/TestObjective.dto';
-import { TestChecklist } from 'stores/dtos/TestChecklist.dto';
+import { Checklist } from 'stores/dtos/Checklist.dto';
 
 export class VectorCateogry {
   id = '';
@@ -67,7 +67,7 @@ class Test implements TestDto {
 
   generalObservation = '';
 
-  checklists: Array<TestChecklist> = [];
+  checklists: Array<Checklist> = [];
 
   strategies: Array<StrategyInputDto> = [];
 

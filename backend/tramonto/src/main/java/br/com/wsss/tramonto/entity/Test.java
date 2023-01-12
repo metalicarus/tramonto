@@ -85,16 +85,25 @@ public class Test extends BaseEntity {
 		this.setTestInObjectives();
 	}
 
-	@PreUpdate
 	@PrePersist
 	public void prePersist() {
+		this.setTestInPkChecklist();
+		this.setTestInObjectives();
+	}
+	
+	@PreUpdate
+	public void preUpdate() {
+		this.setTestInPkChecklist();
+		this.setTestInObjectives();
+	}
+	 
+	private void setTestInPkChecklist() {
 		checklists.forEach(x -> {
 			x.getPk().setTest(this);
 		});
-		this.setTestInObjectives();
 	}
 	private void setTestInObjectives() {
-		objectives.forEach(x -> {
+		objectives.forEach(x -> {			
 			x.setTest(this);
 		});
 	}

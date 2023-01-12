@@ -26,6 +26,8 @@
               :icon="steps.step1.icon"
               :error="steps.step1.error"
               :active-icon="steps.step1.activeIcon"
+              :done="steps.step1.done"
+              :done-color="steps.step1.doneColor"
             >
               <adequacy-step :model="test"
                              :approaches="approachStore.approaches"
@@ -37,7 +39,10 @@
               :name="2"
               :title="steps.step2.title"
               :icon="steps.step2.icon"
+              :error="steps.step2.error"
               :active-icon="steps.step2.activeIcon"
+              :done="steps.step2.done"
+              :done-color="steps.step2.doneColor"
             >
               <check-step v-if="checklistStore.checklists.length > 0"
                           :checklists="checklistStore.checklists"
@@ -50,6 +55,8 @@
               :title="steps.step3.title"
               :icon="steps.step3.icon"
               :active-icon="steps.step3.activeIcon"
+              :done="steps.step3.done"
+              :done-color="steps.step3.doneColor"
             >
               <prepare-step v-if="strategyStore.strategies.length > 0
                             && toolStore.testTools.length > 0"
@@ -64,6 +71,9 @@
               :title="steps.step4.title"
               :icon="steps.step4.icon"
               :active-icon="steps.step4.activeIcon"
+              :done="steps.step4.done"
+              :done-color="steps.step4.doneColor"
+              :disable="test.id === ''"
             >
               <execution-step v-if="categoryStore.vectors.length > 0"
                               :model="test"
@@ -129,6 +139,8 @@ export default {
         icon: 'fas fa-sliders-h',
         activeIcon: 'edit',
         error: false,
+        doneColor: 'green',
+        done: false,
       },
       step2: {
         name: 2,
@@ -136,6 +148,8 @@ export default {
         icon: 'fas fa-check-circle',
         activeIcon: 'edit',
         error: false,
+        doneColor: 'green',
+        done: false,
       },
       step3: {
         name: 3,
@@ -143,6 +157,8 @@ export default {
         icon: 'fas fa-cogs',
         activeIcon: 'edit',
         error: false,
+        doneColor: 'green',
+        done: false,
       },
       step4: {
         name: 5,
@@ -150,6 +166,8 @@ export default {
         icon: 'fas fa-hourglass-half',
         activeIcon: 'edit',
         error: false,
+        doneColor: 'green',
+        done: false,
       },
     });
     const form = ref(null);
@@ -161,11 +179,22 @@ export default {
     const $typeStore = useTypeStore();
     const $toolStore = useToolStore();
     const $checklistStore = useChecklistStore();
+    const { test } = $testStore;
+
     const validateStep = (newVal: never, oldVal: never) => {
       form.value.validate().then((response: never) => {
-        if (oldVal === steps.value.step1.name) steps.value.step1.error = !response;
-        if (oldVal === steps.value.step2.name) steps.value.step2.error = !response;
-        if (oldVal === steps.value.step3.name) steps.value.step3.error = !response;
+        if (oldVal === steps.value.step1.name) {
+          steps.value.step1.error = !response;
+          steps.value.step1.done = response;
+        }
+        if (oldVal === steps.value.step2.name) {
+          steps.value.step2.error = test.checklists.length === 0;
+          steps.value.step2.done = test.checklists.length > 0;
+        }
+        if (oldVal === steps.value.step3.name) {
+          steps.value.step3.error = (test.strategies.length === 0 && test.tools.length === 0);
+          steps.value.step3.done = (test.strategies.length > 0 && test.tools.length > 0);
+        }
         if (oldVal === steps.value.step4.name) steps.value.step4.error = !response;
       });
     };
@@ -180,6 +209,7 @@ export default {
       validateStep,
       steps,
       form,
+      test,
       aggressionStore: $aggressionStore,
       checklistStore: $checklistStore,
       categoryStore: $categoryStore,
@@ -188,7 +218,7 @@ export default {
       testStore: $testStore,
       toolStore: $toolStore,
       typeStore: $typeStore,
-      test: $testStore.test,
+      /// test: $testStore.test,
       step: ref(1),
       tab: ref('tests'),
     };

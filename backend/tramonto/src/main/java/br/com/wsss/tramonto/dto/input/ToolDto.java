@@ -3,6 +3,7 @@ package br.com.wsss.tramonto.dto.input;
 import java.util.Date;
 import java.util.UUID;
 
+import br.com.wsss.tramonto.domain.type.Status;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,7 +16,7 @@ public class ToolDto extends BaseDto {
 	private String link;
 	
 	public ToolDto(UUID id,
-			String status,
+			Status status,
 			Date createdAt,
 			Date updatedAt,
 			String tool,

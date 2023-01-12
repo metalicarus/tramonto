@@ -79,7 +79,6 @@ export const useTestStore = defineStore('tests', () => {
     $paginationStore.setFilterDisable(true);
     TestService.paginate($paginationStore.filter, $paginationStore.page - 1, pagination.value.perPage, '', '')
       .then((response) => {
-        console.log(response);
         rows.value = response.data.content;
         pagination.value.totalItems = response.data.totalItems - response.data.content.length;
         // eslint-disable-next-line max-len

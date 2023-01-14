@@ -7,6 +7,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,6 +16,11 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
+import br.com.wsss.tramonto.controller.v1.TramontoExceptionHandler;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
@@ -24,7 +30,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	private final JwtService jwtService;
 	private final UserDetailsService userDetailsService;
-
+	private ObjectMapper objectMapper;
+	
 	@Override
 	protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response,
 			@NonNull FilterChain filterChain) throws ServletException, IOException {
@@ -32,21 +39,42 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		final String jwt;
 		final String userEmail;
 		if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-			filterChain.doFilter(request, response);
+			handleInvalidToken(request, response);
 			return;
 		}
-		jwt = authHeader.substring(7);
-		userEmail = jwtService.extractUsername(jwt);
-		if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-			UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
-			if (jwtService.isTokenValid(jwt, userDetails)) {
-				UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails,
-						null, userDetails.getAuthorities());
-				authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-				SecurityContextHolder.getContext().setAuthentication(authToken);
+		try {
+			jwt = authHeader.substring(7);
+			userEmail = jwtService.extractUsername(jwt);
+			if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+				UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
+				if (jwtService.isTokenValid(jwt, userDetails)) {
+					UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails,
+							null, userDetails.getAuthorities());
+					authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+					SecurityContextHolder.getContext().setAuthentication(authToken);
+				}
 			}
+			filterChain.doFilter(request, response);
+		} catch (Exception e) {
+			handleExpirationToken(request, response);
+			return;
 		}
-		filterChain.doFilter(request, response);
+	}
+	private void handleInvalidToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		objectMapper = JsonMapper.builder()
+	            .addModule(new JavaTimeModule())
+	            .build();
+	    response.setContentType("application/json");
+	    response.setStatus(HttpStatus.UNAUTHORIZED.value());
+	    response.getWriter().write(objectMapper.writeValueAsString(TramontoExceptionHandler.generateInvalidTokenException(request)));
+	}
+	private void handleExpirationToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		objectMapper = JsonMapper.builder()
+	            .addModule(new JavaTimeModule())
+	            .build();
+	    response.setContentType("application/json");
+	    response.setStatus(HttpStatus.UNAUTHORIZED.value());
+	    response.getWriter().write(objectMapper.writeValueAsString(TramontoExceptionHandler.generateJwtExpirationException(request)));
 	}
 
 }

@@ -86,6 +86,9 @@ export const useTestStore = defineStore('tests', () => {
         $paginationStore.setPageDisable(false);
         $paginationStore.setFilterDisable(false);
       })
+      .catch((response) => {
+        console.log(response.data);
+      })
       .finally(() => {
         $quasar.loading.hide();
       });

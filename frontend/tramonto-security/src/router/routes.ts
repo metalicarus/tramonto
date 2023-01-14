@@ -30,6 +30,10 @@ function addQueryStringPagination(to: any) {
 }
 const routes: RouteRecordRaw[] = [
   {
+    path: '/login',
+    component: () => import('layouts/LoginLayout.vue'),
+  },
+  {
     path: ANCHOR_PAGE,
     component: () => import('layouts/MainLayout.vue'),
     children: [

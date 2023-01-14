@@ -10,5 +10,5 @@ import br.com.wsss.tramonto.entity.Role;
 
 @Repository
 public interface RoleRepository extends JpaRepository<Role, UUID>{
-	Optional<Role> findByRole(String role);
+	Optional<Role> findByRole(br.com.wsss.tramonto.domain.type.Role role);
 }

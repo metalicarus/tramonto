@@ -20,7 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
-import br.com.wsss.tramonto.controller.v1.TramontoExceptionHandler;
+import br.com.wsss.tramonto.controller.v1.handle.TramontoExceptionHandler;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
@@ -39,7 +39,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		final String jwt;
 		final String userEmail;
 		if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-			handleInvalidToken(request, response);
+			String currentRoute = request.getRequestURI();
+			if (!currentRoute.contains("/auth"))
+				handleInvalidToken(request, response);
+			filterChain.doFilter(request, response);
 			return;
 		}
 		try {
@@ -70,8 +73,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	}
 	private void handleExpirationToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		objectMapper = JsonMapper.builder()
-	            .addModule(new JavaTimeModule())
-	            .build();
+						            .addModule(new JavaTimeModule())
+						            .build();
 	    response.setContentType("application/json");
 	    response.setStatus(HttpStatus.UNAUTHORIZED.value());
 	    response.getWriter().write(objectMapper.writeValueAsString(TramontoExceptionHandler.generateJwtExpirationException(request)));

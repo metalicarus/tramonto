@@ -10,6 +10,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import br.com.wsss.tramonto.repository.contract.jpa.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -43,4 +46,6 @@ public class ApplicationConfig {
 	  public PasswordEncoder passwordEncoder() {
 	    return new BCryptPasswordEncoder();
 	  }
+	  
+ 
 }

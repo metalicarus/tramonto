@@ -1,7 +1,6 @@
 package br.com.wsss.tramonto.controller.v1;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,18 +18,11 @@ import lombok.RequiredArgsConstructor;
 public class AuthenticationController {
 
 	private final AuthenticationService service;
-	
-    @GetMapping("/testando")
-    public ResponseEntity<Boolean> testando() throws Exception {
-    	throw new Exception("oia");
-//    	return ResponseEntity.ok(true);
-    }
 
 	@PostMapping("/register")
 	public ResponseEntity<AuthenticationResponseDto> register(@RequestBody RegisterRequestDto request) {
 		return ResponseEntity.ok(service.register(request));
 	}
-
 	@PostMapping("/authenticate")
 	public ResponseEntity<AuthenticationResponseDto> authenticate(@RequestBody AuthenticationRequestDto request) {
 		return ResponseEntity.ok(service.authenticate(request));

@@ -32,18 +32,20 @@ public class AuthenticationService {
 	public AuthenticationResponseDto register(RegisterRequestDto request) {
 		Set<Role> roles = new HashSet<>();
 		request.getRoles().forEach(row -> {
-			Optional<Role> role = roleRepository.findByRole(row.toString());
+			Optional<Role> role = roleRepository.findByRole(row);
 			if (role.isPresent())
 				roles.add(role.get());
 		});
-
-		User user = User.builder().firstName(request.getFirstname()).lastName(request.getLastname())
-				.email(request.getEmail()).password(passwordEncoder.encode(request.getPassword())).roles(roles).build();
+		User user = User.builder()
+						.firstName(request.getFirstname())
+						.lastName(request.getLastname())
+						.email(request.getEmail())
+						.password(passwordEncoder.encode(request.getPassword()))
+						.roles(roles).build();
 		userRepository.save(user);
 		String jwtToken = jwtService.generateToken(user);
 		return AuthenticationResponseDto.builder().token(jwtToken).build();
 	}
-
 	public AuthenticationResponseDto authenticate(AuthenticationRequestDto request) {
 		authenticationManager
 				.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));

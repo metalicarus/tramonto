@@ -1,4 +1,4 @@
-package br.com.wsss.tramonto.controller.v1;
+package br.com.wsss.tramonto.controller.v1.handle;
 
 import java.time.Instant;
 
@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import br.com.wsss.tramonto.controller.v1.handle.TramontoStandardError;
 import br.com.wsss.tramonto.exception.TramontoException;
 
 @RestControllerAdvice

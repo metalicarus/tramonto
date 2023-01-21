@@ -1,9 +1,7 @@
 package br.com.wsss.tramonto.dto.input;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -39,6 +37,7 @@ public class TestDto extends BaseDto {
 	private TestTypeDto type;
 	private Set<ChecklistDto> checklists = new HashSet<>();
 	private Set<TestObjectiveDto> objectives = new HashSet<>();
+	private Set<StrategyDto> strategies = new HashSet<>();
 	
 	
 	@Getter

@@ -19,35 +19,21 @@ public class TramontoExceptionHandler extends ResponseEntityExceptionHandler {
 	@ExceptionHandler(value = { TramontoException.class })
 	@ResponseStatus(value = HttpStatus.NOT_FOUND)
 	public ResponseEntity<TramontoStandardError> tramontoJwt(TramontoException exception, HttpServletRequest request) {
-		return ResponseEntity
-				.status(HttpStatus.UNAUTHORIZED)
-				.body(TramontoStandardError
-						.builder()
-						.status(HttpStatus.UNAUTHORIZED.value())
-						.message("Expired credentials")
-						.error("Your credentials have expired, please log in again")
-						.timestamp(Instant.now())
-						.build()
-				);
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+				.body(TramontoStandardError.builder().status(HttpStatus.UNAUTHORIZED.value())
+						.message("Expired credentials").error("Your credentials have expired, please log in again")
+						.timestamp(Instant.now()).build());
 	}
+
 	public static TramontoStandardError generateInvalidTokenException(HttpServletRequest request) {
-		return TramontoStandardError
-				.builder()
-				.status(HttpStatus.UNAUTHORIZED.value())
-				.message("Invalid credentials")
-				.error("Your credentials are invalid or non-existent, please login again")
-				.timestamp(Instant.now())
-				.path(request.getRequestURI())
-				.build();
+		return TramontoStandardError.builder().status(HttpStatus.UNAUTHORIZED.value()).message("Invalid credentials")
+				.error("Your credentials are invalid or non-existent, please login again").timestamp(Instant.now())
+				.path(request.getRequestURI()).build();
 	}
+
 	public static TramontoStandardError generateJwtExpirationException(HttpServletRequest request) {
-		return TramontoStandardError
-				.builder()
-				.status(HttpStatus.UNAUTHORIZED.value())
-				.message("Expired credentials")
-				.error("Your credentials have expired, please log in again")
-				.timestamp(Instant.now())
-				.path(request.getRequestURI())
-				.build();
+		return TramontoStandardError.builder().status(HttpStatus.UNAUTHORIZED.value()).message("Expired credentials")
+				.error("Your credentials have expired, please log in again").timestamp(Instant.now())
+				.path(request.getRequestURI()).build();
 	}
 }

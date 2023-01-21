@@ -13,6 +13,11 @@ import lombok.Setter;
 @Setter
 public class Strategy extends BaseEntity {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@Column(name= "STRATEGY", nullable= false, unique= true, length = 35)
 	private String strategy;
 	

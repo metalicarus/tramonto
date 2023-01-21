@@ -30,6 +30,11 @@ import lombok.Setter;
 @Setter
 public class Test extends BaseEntity {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@Column(name = "IDENTIFIER", nullable = false, unique = true, updatable = false)
 	private String identifier;
 
@@ -79,6 +84,9 @@ public class Test extends BaseEntity {
 	@OneToMany(mappedBy = "test", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private Set<TestObjective> objectives = new HashSet<>();
 	
+	@OneToMany(mappedBy = "pk.test", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private Set<TestStrategy> strategies =  new HashSet<>();
+	
 	public void addObjectives(Set<TestObjective> objs) {
 		this.objectives.clear();
 		this.objectives.addAll(objs);
@@ -89,12 +97,20 @@ public class Test extends BaseEntity {
 	public void prePersist() {
 		this.setTestInPkChecklist();
 		this.setTestInObjectives();
+		this.setTestInPkStrategies();
 	}
 	
 	@PreUpdate
 	public void preUpdate() {
 		this.setTestInPkChecklist();
 		this.setTestInObjectives();
+		this.setTestInPkStrategies();
+	}
+	
+	private void setTestInPkStrategies() {
+		strategies.forEach(x -> {
+			x.getPk().setTest(this);
+		});
 	}
 	 
 	private void setTestInPkChecklist() {

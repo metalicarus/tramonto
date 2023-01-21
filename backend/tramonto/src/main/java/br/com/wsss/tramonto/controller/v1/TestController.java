@@ -28,31 +28,30 @@ public class TestController {
 	@Autowired
 	private TestService service;
 
-    @PreAuthorize("hasAnyAuthority('TESTER_INTERMEDIARY', 'TESTER_ADVANCED')")
+	@PreAuthorize("hasAnyAuthority('TESTER_INTERMEDIARY', 'TESTER_ADVANCED')")
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	public ResponseEntity<TestDto> save(@RequestBody TestDto dto) {
 		return ResponseEntity.ok(service.save(dto));
 	}
-    
-    @PreAuthorize("hasAnyAuthority('TESTER_ADVANCED', 'TESTER_INTERMEDIARY')")
+
+	@PreAuthorize("hasAnyAuthority('TESTER_ADVANCED', 'TESTER_INTERMEDIARY')")
 	@PutMapping
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<TestDto> update(@RequestBody TestDto dto) {
 		return ResponseEntity.ok(service.update(dto));
 	}
 
-    @PreAuthorize("hasAnyAuthority('TESTER_BASIC', 'TESTER_INTERMEDIARY', 'TESTER_ADVANCED')")
+	@PreAuthorize("hasAnyAuthority('TESTER_BASIC', 'TESTER_INTERMEDIARY', 'TESTER_ADVANCED')")
 	@GetMapping
 	@ResponseStatus(HttpStatus.OK)
-	public ResponseEntity<PageResponse<TestDto>> paginate(@RequestParam("filter") String filter, @RequestParam("page") Integer page,
-			@RequestParam("perPage") Integer perPage,
-			@RequestParam("sortBy") String sortBy,
-			@RequestParam("direction") String direction) {
+	public ResponseEntity<PageResponse<TestDto>> paginate(@RequestParam("filter") String filter,
+			@RequestParam("page") Integer page, @RequestParam("perPage") Integer perPage,
+			@RequestParam("sortBy") String sortBy, @RequestParam("direction") String direction) {
 		return ResponseEntity.ok(service.paginate(filter, page, perPage, sortBy, Direction.fromString(direction)));
 	}
-	
-    @PreAuthorize("hasAnyAuthority('TESTER_BASIC', 'TESTER_INTERMEDIARY', 'TESTER_ADVANCED')")
+
+	@PreAuthorize("hasAnyAuthority('TESTER_BASIC', 'TESTER_INTERMEDIARY', 'TESTER_ADVANCED')")
 	@GetMapping("{testId}")
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<TestDto> find(@PathVariable UUID testId) {

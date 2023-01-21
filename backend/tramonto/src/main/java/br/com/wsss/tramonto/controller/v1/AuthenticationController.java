@@ -1,14 +1,17 @@
 package br.com.wsss.tramonto.controller.v1;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.wsss.tramonto.dto.input.AuthenticationRequestDto;
 import br.com.wsss.tramonto.dto.input.AuthenticationResponseDto;
 import br.com.wsss.tramonto.dto.input.RegisterRequestDto;
+import br.com.wsss.tramonto.entity.User;
 import br.com.wsss.tramonto.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 
@@ -18,6 +21,11 @@ import lombok.RequiredArgsConstructor;
 public class AuthenticationController {
 
 	private final AuthenticationService service;
+	
+	@GetMapping
+	public ResponseEntity<User> findUserByToken(@RequestParam("token") String token) {
+		return ResponseEntity.ok(service.findUserByToken(token));
+	}
 
 	@PostMapping("/register")
 	public ResponseEntity<AuthenticationResponseDto> register(@RequestBody RegisterRequestDto request) {

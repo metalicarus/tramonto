@@ -1,26 +1,24 @@
 <template>
-  <q-item clickable tag="a" :href="link">
-    <q-item-section v-if="icon" avatar>
-      <q-icon :name="icon" />
+  <q-item :href="essential.link" clickable tag="a">
+    <q-item-section v-if="essential.icon" avatar>
+      <q-icon :name="essential.icon"/>
     </q-item-section>
-
     <q-item-section>
-      <q-item-label>{{ title }}</q-item-label>
-      <q-item-label caption>{{ caption }}</q-item-label>
+      <q-item-label>{{ essential.title }}</q-item-label>
+      <q-item-label caption>{{ essential.caption }}</q-item-label>
     </q-item-section>
   </q-item>
 </template>
 
-<script setup lang="ts">
-export interface EssentialLinkProps {
-  title: string;
-  caption?: string;
-  link?: string;
-  icon?: string;
-}
-withDefaults(defineProps<EssentialLinkProps>(), {
-  caption: "",
-  link: "",
-  icon: "",
+<script lang="ts" setup>
+import { PropType } from 'vue';
+import EssentialLink from 'components/EssentialLink';
+
+defineProps({
+  essential: {
+    type: Object as PropType<typeof EssentialLink>,
+    required: true,
+  },
 });
+
 </script>

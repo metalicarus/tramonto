@@ -12,7 +12,8 @@ import br.com.wsss.tramonto.entity.User;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, UUID> {
-	
-	@Query(value= "SELECT u FROM User u LEFT JOIN FETCH u.roles ur WHERE u.email = :email")
+
+	@Query(value = "SELECT u FROM User u LEFT JOIN FETCH u.roles ur WHERE u.email = :email")
 	Optional<User> findByEmail(@Param("email") String email);
+
 }

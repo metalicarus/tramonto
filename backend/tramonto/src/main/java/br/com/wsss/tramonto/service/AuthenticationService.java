@@ -28,6 +28,12 @@ public class AuthenticationService {
 	private final PasswordEncoder passwordEncoder;
 	private final JwtService jwtService;
 	private final AuthenticationManager authenticationManager;
+	
+	public User findUserByToken(String token) {
+		String jwt = (token.contains("Bearer")) ? token.substring(7) : token;
+		String userEmail = jwtService.extractUsername(jwt);	
+		return userRepository.findByEmail(userEmail).get();
+	}
 
 	public AuthenticationResponseDto register(RegisterRequestDto request) {
 		Set<Role> roles = new HashSet<>();

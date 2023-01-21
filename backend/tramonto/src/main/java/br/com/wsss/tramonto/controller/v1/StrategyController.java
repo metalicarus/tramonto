@@ -29,7 +29,7 @@ public class StrategyController {
 	@Autowired
 	private StrategyService service;
 	
-    @PreAuthorize("hasAnyRole('TESTER_ADVANCED')")
+    @PreAuthorize("hasAnyAuthority('TESTER_ADVANCED')")
 	@PutMapping
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
@@ -37,21 +37,21 @@ public class StrategyController {
 		return ResponseEntity.ok(service.save(dto));
 	}
 	
-    @PreAuthorize("hasAnyRole('TESTER_ADVANCED')")
+    @PreAuthorize("hasAnyAuthority('TESTER_ADVANCED')")
 	@GetMapping("{strategyId}")
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<StrategyDto> findById(@PathVariable UUID strategyId) {
 		return ResponseEntity.ok(service.findById(strategyId));
 	}
     
-    @PreAuthorize("hasAnyRole('TESTER_ADVANCED')")
+    @PreAuthorize("hasAnyAuthority('TESTER_ADVANCED')")
 	@GetMapping("/findAll")
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<Set<StrategyDto>> findAll() {
 		return ResponseEntity.ok(service.findAll());
 	}
 	
-    @PreAuthorize("hasAnyRole('TESTER_ADVANCED')")
+    @PreAuthorize("hasAnyAuthority('TESTER_ADVANCED')")
 	@GetMapping
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<PageResponse<StrategyDto>> paginate(@RequestParam("filter") String filter, @RequestParam("page") Integer page,

@@ -1,5 +1,6 @@
 import { boot } from 'quasar/wrappers';
 import axios, { AxiosInstance } from 'axios';
+import { Cookies } from 'quasar';
 
 declare module '@vue/runtime-core' {
   interface ComponentCustomProperties {
@@ -13,9 +14,19 @@ declare module '@vue/runtime-core' {
 // good idea to move this instance creation inside of the
 // "export default () => {}" function below (which runs individually
 // for each client)
-const api = axios.create({ baseURL: process.env.BASE_URL, headers: { Authorization: null } });
+const api = axios.create({
+  baseURL: process.env.BASE_URL,
+});
 
 export default boot(({ app }) => {
+  api.interceptors.request.use((config) => {
+    const tramontoSecurityAccessToken = Cookies.get('tramontoSecurityAccessToken');
+    if (tramontoSecurityAccessToken !== null) {
+      config.headers.Authorization = `Bearer ${tramontoSecurityAccessToken}`;
+    }
+    return config;
+  });
+
   // for use inside Vue files (Options API) through this.$axios and this.$api
   app.config.globalProperties.$axios = axios;
   // ^ ^ ^ this will allow you to use this.$axios (for Vue Options API form)

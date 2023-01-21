@@ -1,6 +1,9 @@
 package br.com.wsss.tramonto.entity;
 
+import java.util.Set;
+
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -25,6 +28,9 @@ public class Role extends BaseEntity implements GrantedAuthority {
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false, unique = true)
 	private br.com.wsss.tramonto.domain.type.Role role;
+	
+	@ElementCollection
+	private Set<String> routes;
 
 	@Override
 	public String getAuthority() {

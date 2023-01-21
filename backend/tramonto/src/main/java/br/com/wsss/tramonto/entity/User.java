@@ -13,6 +13,8 @@ import javax.persistence.Table;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
@@ -38,6 +40,7 @@ public class User extends BaseEntity implements UserDetails {
 	@Column(name= "email", nullable= false, unique= true)
 	private String email;
 	
+	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	@Column(name= "PASSWORD", nullable= false)
 	private String password;
 	

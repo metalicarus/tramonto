@@ -2,20 +2,19 @@ import { RouteRecordRaw } from 'vue-router';
 import {
   ANCHOR_PAGE,
   CHECKLISTS_PAGINATE,
-  CHECKLISTS_SAVE,
+  CHECKLISTS_SAVE, LOGIN_PAGE,
   STRATEGIES_PAGINATE,
   STRATEGIES_SAVE,
-  STRATEGIES_UPDATE,
   TESTS_PAGINATE,
-  TESTS_SAVE,
+  TESTS_SAVE, UNAUTHORIZED,
   VECTORS_CATEGORIES_PAGINATE,
   VECTORS_CATEGORIES_SAVE,
 } from 'src/consts/RoutesConsts';
+import { ROLE_TESTER_ADVANCED, ROLE_TESTER_BASIC } from 'src/consts/RolesConsts';
 
 // eslint-disable-next-line consistent-return
 function addQueryStringPagination(to: any) {
   if (Object.keys(to.query).length === 0) {
-    console.log(to.query);
     return {
       path: to.path,
       query: {
@@ -28,20 +27,30 @@ function addQueryStringPagination(to: any) {
     };
   }
 }
+
 const routes: RouteRecordRaw[] = [
   {
-    path: '/login',
+    path: LOGIN_PAGE,
+    name: 'login',
     component: () => import('layouts/LoginLayout.vue'),
   },
   {
     path: ANCHOR_PAGE,
     component: () => import('layouts/MainLayout.vue'),
+    meta: {
+      role: ROLE_TESTER_BASIC,
+    },
     children: [
+      {
+        path: UNAUTHORIZED,
+        component: () => import('pages/Unauthorized.vue'),
+      },
       {
         path: '',
         component: () => import('pages/IndexPage.vue'),
         meta: {
           type: 'main',
+          role: ROLE_TESTER_BASIC,
         },
       },
       {
@@ -49,6 +58,7 @@ const routes: RouteRecordRaw[] = [
         component: () => import('pages/strategies/IndexPage.vue'),
         meta: {
           type: 'pagination',
+          role: ROLE_TESTER_ADVANCED,
         },
         beforeEnter: [addQueryStringPagination],
       },
@@ -57,6 +67,7 @@ const routes: RouteRecordRaw[] = [
         component: () => import('pages/strategies/SavePage.vue'),
         meta: {
           type: 'save',
+          role: ROLE_TESTER_ADVANCED,
         },
       },
       {
@@ -64,6 +75,7 @@ const routes: RouteRecordRaw[] = [
         component: () => import('pages/vectorCategory/IndexPage.vue'),
         meta: {
           type: 'pagination',
+          role: ROLE_TESTER_ADVANCED,
         },
         beforeEnter: [addQueryStringPagination],
       },
@@ -72,23 +84,33 @@ const routes: RouteRecordRaw[] = [
         component: () => import('pages/vectorCategory/SavePage.vue'),
         meta: {
           type: 'save',
+          role: ROLE_TESTER_ADVANCED,
         },
       },
       {
         path: TESTS_SAVE,
         component: () => import('pages/tests/SavePage.vue'),
-        meta: { type: 'save' },
+        meta: {
+          type: 'save',
+          role: ROLE_TESTER_ADVANCED,
+        },
       },
       {
         path: TESTS_PAGINATE,
         component: () => import('pages/tests/IndexPage.vue'),
-        meta: { type: 'pagination' },
+        meta: {
+          type: 'pagination',
+          role: ROLE_TESTER_ADVANCED,
+        },
         beforeEnter: [addQueryStringPagination],
       },
       {
         path: CHECKLISTS_PAGINATE,
         component: () => import('pages/checklists/IndexPage.vue'),
-        meta: { type: 'pagination' },
+        meta: {
+          type: 'pagination',
+          role: ROLE_TESTER_ADVANCED,
+        },
         beforeEnter: [addQueryStringPagination],
       },
       {
@@ -98,13 +120,9 @@ const routes: RouteRecordRaw[] = [
       },
     ],
   },
-
-  // Always leave this as last one,
-  // but you can also remove it
   {
     path: '/:catchAll(.*)*',
     component: () => import('pages/ErrorNotFound.vue'),
   },
 ];
-
 export default routes;

@@ -1,3 +1,5 @@
+export const UNAUTHORIZED = '/unauthorized';
+export const LOGIN_PAGE = '/login';
 export const ANCHOR_PAGE = '/';
 export const STRATEGIES_PAGINATE = '/strategies';
 export const STRATEGIES_SAVE = '/strategies/save';

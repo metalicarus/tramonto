@@ -26,7 +26,7 @@ public class TestTypeController {
 	@Autowired
 	private TestTypeService service;
 	
-    @PreAuthorize("hasAnyRole('TESTER_ADVANCED')")
+    @PreAuthorize("hasAnyAuthority('TESTER_ADVANCED')")
 	@PutMapping
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
@@ -34,14 +34,14 @@ public class TestTypeController {
 		return ResponseEntity.ok(service.save(dto));
 	}
 	
-    @PreAuthorize("hasAnyRole('TESTER_ADVANCED')")
+    @PreAuthorize("hasAnyAuthority('TESTER_ADVANCED')")
 	@GetMapping("{testTypeId}")
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<TestTypeDto> find(@PathVariable UUID testTypeId) {
 		return ResponseEntity.ok(service.findById(testTypeId));
 	}
     
-    @PreAuthorize("hasAnyRole('TESTER_ADVANCED')")
+    @PreAuthorize("hasAnyAuthority('TESTER_ADVANCED')")
 	@GetMapping
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<Set<TestTypeDto>> findAll() {

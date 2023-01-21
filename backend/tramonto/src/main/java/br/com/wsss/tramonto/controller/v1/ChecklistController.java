@@ -29,7 +29,7 @@ public class ChecklistController {
 	@Autowired
 	private BaseService<ChecklistDto, UUID> service;
 	
-    @PreAuthorize("hasAnyRole('TESTER_ADVANCED')")
+    @PreAuthorize("hasAnyAuthority('TESTER_ADVANCED')")
 	@PutMapping
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
@@ -37,20 +37,21 @@ public class ChecklistController {
 		return ResponseEntity.ok(service.save(dto));
 	}
     
-    @PreAuthorize("hasAnyRole('TESTER_ADVANCED')")
+    @PreAuthorize("hasAnyAuthority('TESTER_ADVANCED')")
 	@GetMapping("{checklistId}")
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<ChecklistDto> findById(@PathVariable UUID checklistId) {
 		return ResponseEntity.ok(service.findById(checklistId));
 	}
 	
+    @PreAuthorize("hasAnyAuthority('TESTER_ADVANCED', 'TESTER_INTERMEDIARY', 'TESTER_BASIC')")
 	@GetMapping("/findAll")
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<Set<ChecklistDto>> findAll() {
 		return ResponseEntity.ok(service.findAll());
 	}
 	
-    @PreAuthorize("hasAnyRole('TESTER_ADVANCED')")
+    @PreAuthorize("hasAnyAuthority('TESTER_ADVANCED')")
 	@GetMapping
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<PageResponse<ChecklistDto>> paginate(@RequestParam("filter") String filter, @RequestParam("page") Integer page,

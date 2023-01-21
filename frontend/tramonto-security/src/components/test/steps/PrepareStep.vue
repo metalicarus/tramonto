@@ -5,10 +5,10 @@
         <q-list bordered
                 padding>
           <q-expansion-item expand-separator label="Strategies">
-            <q-item v-ripple
-                    clickable
-                    v-for="(item, index) in copyStrategies"
+            <q-item v-for="(item, index) in copyStrategies"
                     :key="index"
+                    v-ripple
+                    clickable
             >
               <q-item-section side top>
                 <q-checkbox v-model="item.check"
@@ -17,27 +17,27 @@
               </q-item-section>
               <q-item-section>
                 <q-item-label>{{ item.strategy }}</q-item-label>
-                <q-item-label caption> {{ item.description }} </q-item-label>
+                <q-item-label caption> {{ item.description }}</q-item-label>
               </q-item-section>
             </q-item>
           </q-expansion-item>
-          <q-expansion-item expand-separator label="Tools">
-            <q-item v-ripple
-                    clickable
-                    v-for="(item, index) in copyTools"
-                    :key="index"
-            >
-              <q-item-section side top>
-                <q-checkbox v-model="item.check"
-                            @update:model-value="selectTool"
-                />
-              </q-item-section>
-              <q-item-section>
-                <q-item-label>{{ item.tool }}</q-item-label>
-                <q-item-label caption> {{ item.description }} </q-item-label>
-              </q-item-section>
-            </q-item>
-          </q-expansion-item>
+          <!--          <q-expansion-item expand-separator label="Tools">
+                      <q-item v-ripple
+                              clickable
+                              v-for="(item, index) in copyTools"
+                              :key="index"
+                      >
+                        <q-item-section side top>
+                          <q-checkbox v-model="item.check"
+                                      @update:model-value="selectTool"
+                          />
+                        </q-item-section>
+                        <q-item-section>
+                          <q-item-label>{{ item.tool }}</q-item-label>
+                          <q-item-label caption> {{ item.description }} </q-item-label>
+                        </q-item-section>
+                      </q-item>
+                    </q-expansion-item>-->
         </q-list>
       </div>
     </div>
@@ -45,54 +45,65 @@
 </template>
 
 <script lang="ts">
-import { onMounted, ref } from 'vue';
+import { onMounted, PropType, ref } from 'vue';
+import { StrategyDto } from 'src/services/dtos/StrategyInput.dto';
 
 export default {
   name: 'PrepareStep',
   props: {
     strategies: {
-      type: Array,
+      type: Array as PropType<Array<StrategyDto>>,
       required: true,
     },
-    tools: {
+    /* tools: {
       type: Array,
       required: true,
-    },
+    }, */
   },
   setup(props: any, ctx: any) {
     const selectedStrategies = ref([]);
-    const selectedTools = ref([]);
+    /*
+        const selectedTools = ref([]);
+    */
 
     const copyStrategies = ref(props.strategies);
-    const copyTools = ref(props.tools);
+    /* const copyTools = ref(props.tools); */
 
-    function setFalseInTools() {
+    /* function setFalseInTools() {
       copyTools.value.forEach((x: { check: boolean; }) => {
         x.check = false;
       });
-    }
+    } */
     function setFalseInStrategies() {
       copyStrategies.value.forEach((x: { check: boolean; }) => {
-        x.check = false;
+        if (!x.check) {
+          x.check = false;
+        }
       });
     }
-    function selectTool() {
+
+    /* function selectTool() {
       ctx.emit('update-tools', copyTools.value.filter((x: { check: boolean; }) => x.check));
-    }
+    } */
     function selectStrategy() {
       ctx.emit('update-strategies', copyStrategies.value.filter((x: { check: boolean; }) => x.check));
     }
+
     onMounted(() => {
       setFalseInStrategies();
-      setFalseInTools();
+      /* setFalseInTools(); */
     });
     return {
       selectedStrategies,
-      selectedTools,
+      /*
+            selectedTools,
+      */
       copyStrategies,
-      copyTools,
+      /*
+            copyTools,
+      */
       selectStrategy,
-      selectTool,
+      /* selectTool, */
     };
   },
 };

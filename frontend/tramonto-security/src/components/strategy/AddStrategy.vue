@@ -49,11 +49,11 @@
 
 <script lang="ts">
 import StrategySerivce from 'src/services/strategy.serivce';
-import StrategyInputDto from 'src/services/dtos/StrategyInput.dto';
 import { useQuasar } from 'quasar';
 import { onMounted, ref } from 'vue';
 import StatusSelect from 'components/baseComponents/statusSelect/StatusSelect.vue';
 import { useRouter } from 'vue-router';
+import { StrategyDto } from 'src/services/dtos/StrategyInput.dto';
 
 export default {
   name: 'add-strategy',
@@ -77,18 +77,12 @@ export default {
       description: '',
       status: 'ACTIVE',
     });
-    function resetForm() {
-      strategy.value.strategy = '';
-      strategy.value.id = '';
-      strategy.value.description = '';
-      strategy.value.status = 'ACTIVE';
-    }
     function setStatus(value: any) {
       strategy.value.status = value;
     }
     function save() {
       $q.loading.show();
-      StrategySerivce.save(strategy.value as StrategyInputDto)
+      StrategySerivce.save(strategy.value as StrategyDto)
         .then((response) => {
           $q.notify({
             message: '[SUCCESS]: Successfully saved record',

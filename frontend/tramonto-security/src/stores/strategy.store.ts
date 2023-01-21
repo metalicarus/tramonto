@@ -2,12 +2,12 @@ import { defineStore } from 'pinia';
 import StrategySerivce from 'src/services/strategy.serivce';
 import { useQuasar } from 'quasar';
 import { ref, Ref } from 'vue';
-import StrategyInputDto from 'src/services/dtos/StrategyInput.dto';
+import { StrategyDto } from 'src/services/dtos/StrategyInput.dto';
 
 export const useStrategyStore = defineStore('strategies', () => {
   // state
   const $q = useQuasar();
-  const strategies: Ref<StrategyInputDto[]> = ref([]);
+  const strategies: Ref<StrategyDto[]> = ref([]);
   // actions
   const findAllStrategies = () => {
     $q.loading.show();

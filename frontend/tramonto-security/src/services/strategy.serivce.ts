@@ -1,10 +1,10 @@
 import { api } from 'boot/axios';
-import StrategyInputDto from 'src/services/dtos/StrategyInput.dto';
 import { AxiosResponse } from 'axios';
+import { StrategyDto } from 'src/services/dtos/StrategyInput.dto';
 
 class StrategyService {
   // eslint-disable-next-line class-methods-use-this
-  findAll(): Promise<AxiosResponse<StrategyInputDto[]>> {
+  findAll(): Promise<AxiosResponse<StrategyDto[]>> {
     return api.get(`/v1/strategy/findAll`);
   }
 
@@ -14,7 +14,7 @@ class StrategyService {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  save: (strategy: StrategyInputDto) => Promise<AxiosResponse<any>> = (strategy: StrategyInputDto) => api.put('/v1/strategy', strategy);
+  save: (strategy: StrategyDto) => Promise<AxiosResponse<any>> = (strategy: StrategyDto) => api.put('/v1/strategy', strategy);
 
   // eslint-disable-next-line class-methods-use-this
   paginate(

@@ -7,7 +7,7 @@ export class TestObjective implements BaseDto {
 
   createdAt = '';
 
-  status = '';
+  status = 'ACTIVE';
 
   updatedAt = '';
 }

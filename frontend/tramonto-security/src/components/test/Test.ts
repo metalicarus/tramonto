@@ -1,5 +1,5 @@
 import { date } from 'quasar';
-import StrategyInputDto from 'src/services/dtos/StrategyInput.dto';
+import { StrategyDto } from 'src/services/dtos/StrategyInput.dto';
 import { ToolDto } from 'src/services/dtos/Tool.dto';
 import TestDto from 'src/services/dtos/Test.dto';
 import { TestObjective } from 'stores/dtos/TestObjective.dto';
@@ -69,7 +69,7 @@ class Test implements TestDto {
 
   checklists: Array<Checklist> = [];
 
-  strategies: Array<StrategyInputDto> = [];
+  strategies: Array<StrategyDto> = [];
 
   tools: Array<ToolDto> = [];
 

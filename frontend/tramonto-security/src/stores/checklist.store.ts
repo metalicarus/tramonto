@@ -1,38 +1,35 @@
 import { defineStore } from 'pinia';
-import { useQuasar } from 'quasar';
+import { Loading, Notify } from 'quasar';
 import ChecklistService from 'src/services/Checklist.service';
-import { ref, Ref } from 'vue';
+import { ref } from 'vue';
 import { Checklist } from 'stores/dtos/Checklist.dto';
 
-export const useChecklistStore = defineStore('checklists', () => {
-  // state
-  const $q = useQuasar();
-  const checklists: Ref<Checklist[]> = ref([]);
-  // actions
-  const findAllChecklists = () => {
-    $q.loading.show();
-    ChecklistService.findAll().then((response) => {
-      checklists.value = response.data;
-    })
-      .catch((error) => {
-        $q.notify({
-          message: `[ERROR]: ${error.response.data.message}`,
-          color: 'negative',
-          multiLine: true,
-          actions: [
-            {
-              label: 'Reply',
-              color: 'yellow',
-            },
-          ],
-        });
+export const useChecklistStore = defineStore('checklists', {
+  state: () => ({
+    checklists: ref<Checklist[]>([]),
+  }),
+  actions: {
+    async findAllChecklists() {
+      Loading.show();
+      await ChecklistService.findAll().then((response) => {
+        this.checklists = response.data;
       })
-      .finally(() => {
-        $q.loading.hide();
-      });
-  };
-  return {
-    checklists,
-    findAllChecklists,
-  };
+        .catch((error) => {
+          Notify.create({
+            message: `[ERROR]: ${error.response.data.message}`,
+            color: 'negative',
+            multiLine: true,
+            actions: [
+              {
+                label: 'Reply',
+                color: 'yellow',
+              },
+            ],
+          });
+        })
+        .finally(() => {
+          Loading.hide();
+        });
+    },
+  },
 });

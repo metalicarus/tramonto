@@ -4,7 +4,7 @@ import { Checklist } from 'stores/dtos/Checklist.dto';
 
 class ChecklistService {
   // eslint-disable-next-line class-methods-use-this
-  findAll(): Promise<AxiosResponse<Checklist[]>> {
+  async findAll(): Promise<AxiosResponse<Checklist[]>> {
     return api.get('/v1/checklist/findAll');
   }
 

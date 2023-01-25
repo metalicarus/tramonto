@@ -4,7 +4,7 @@ import { StrategyDto } from 'src/services/dtos/StrategyInput.dto';
 
 class StrategyService {
   // eslint-disable-next-line class-methods-use-this
-  findAll(): Promise<AxiosResponse<StrategyDto[]>> {
+  async findAll(): Promise<AxiosResponse<StrategyDto[]>> {
     return api.get(`/v1/strategy/findAll`);
   }
 

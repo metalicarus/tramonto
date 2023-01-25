@@ -1,38 +1,36 @@
 import { defineStore } from 'pinia';
 import StrategySerivce from 'src/services/strategy.serivce';
-import { useQuasar } from 'quasar';
-import { ref, Ref } from 'vue';
+import { Loading, Notify } from 'quasar';
+import { ref } from 'vue';
 import { StrategyDto } from 'src/services/dtos/StrategyInput.dto';
 
-export const useStrategyStore = defineStore('strategies', () => {
-  // state
-  const $q = useQuasar();
-  const strategies: Ref<StrategyDto[]> = ref([]);
-  // actions
-  const findAllStrategies = () => {
-    $q.loading.show();
-    StrategySerivce.findAll().then((response) => {
-      strategies.value = response.data;
-    })
-      .catch((error) => {
-        $q.notify({
-          message: `[ERROR]: ${error.response.data.message}`,
-          color: 'negative',
-          multiLine: true,
-          actions: [
-            {
-              label: 'Reply',
-              color: 'yellow',
-            },
-          ],
+export const useStrategyStore = defineStore('strategies', {
+  state: () => ({
+    strategies: ref<StrategyDto[]>([]),
+  }),
+  actions: {
+    async findAllStrategies() {
+      Loading.show();
+      await StrategySerivce.findAll()
+        .then((response) => {
+          this.strategies = response.data;
+        })
+        .catch((error) => {
+          Notify.create({
+            message: `[ERROR]: ${error.response.data.message}`,
+            color: 'negative',
+            multiLine: true,
+            actions: [
+              {
+                label: 'Reply',
+                color: 'yellow',
+              },
+            ],
+          });
+        })
+        .finally(() => {
+          Loading.hide();
         });
-      })
-      .finally(() => {
-        $q.loading.hide();
-      });
-  };
-  return {
-    strategies,
-    findAllStrategies,
-  };
+    },
+  },
 });

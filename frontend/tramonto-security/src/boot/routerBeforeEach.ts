@@ -10,6 +10,9 @@ export default boot(({
   router.beforeEach(async (to, from, next) => {
     const $authStore = useAuthenticationStore();
     const tramontoSecurityAccessToken = Cookies.get('tramontoSecurityAccessToken');
+    if (to.query.redirect === 'login') {
+      to.query.redirect = '/';
+    }
     if (to.path === UNAUTHORIZED) {
       next();
       return;
@@ -25,11 +28,11 @@ export default boot(({
       next({ path: to.query.redirect });
       return;
     }
-    if (Cookies.get('tramontoSecurityAccessToken') !== null
+    if (tramontoSecurityAccessToken !== null
       && $authStore.$state.token === undefined) {
-      await $authStore.setToken(Cookies.get('tramontoSecurityAccessToken'));
+      await $authStore.setToken(tramontoSecurityAccessToken);
       await $authStore.findUser();
-    } else {
+    } else if (to.path !== '/login' && to.path !== '/') {
       const $user = $authStore.user;
       const roles = toRaw($user?.authorities);
       const isAuthorized = roles?.some((role) => role.routes.includes(to.path));

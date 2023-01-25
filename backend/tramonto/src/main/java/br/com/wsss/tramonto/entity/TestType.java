@@ -13,6 +13,11 @@ import lombok.Setter;
 @Setter
 public class TestType extends BaseEntity {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@Column(name= "TYPE", updatable= true, unique= true, nullable= false)
 	private String type;
 	

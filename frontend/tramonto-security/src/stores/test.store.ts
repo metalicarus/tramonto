@@ -1,105 +1,125 @@
 import { defineStore } from 'pinia';
-import { Ref, ref } from 'vue';
-import Test from 'components/test/Test';
-import TestService from 'src/services/test.service';
-import TestDto from 'src/services/dtos/Test.dto';
-import { QTableProps, useQuasar } from 'quasar';
 import TestPaginationDto from 'stores/dtos/TestPagination.dto';
+import TestTableDefinition from 'stores/TestTableDefinition';
+import { Loading, Notify, QTableProps } from 'quasar';
+import Test from 'components/test/Test';
+import TestDto from 'src/services/dtos/Test.dto';
 import { usePaginationStore } from 'stores/paginate.store';
+import TestService from 'src/services/test.service';
+import { ref } from 'vue';
+import { TestObjective } from 'stores/dtos/TestObjective.dto';
 
-export const useTestStore = defineStore('tests', () => {
-  // state
-  const test: Ref<TestDto> = ref(Test);
-  const rows: Ref<TestPaginationDto[]> = ref([]);
-  const rowKey = 'title';
-  const columns: QTableProps['columns'] = [
-    {
-      name: 'id',
-      label: 'ID',
-      field: 'id',
-      align: 'left',
+export const useTestStore = defineStore('tests', {
+  state: () => ({
+    rows: ref<TestPaginationDto[]>([]),
+    rowKey: ref<string>(TestTableDefinition.rowKey),
+    columns: TestTableDefinition.columns as QTableProps['columns'],
+    test: ref<TestDto>(Test),
+    pagination: ref({
+      filter: '',
+      totalItems: 11,
+      totalPages: 1,
+      page: 0,
+      perPage: 10,
+      sortBy: '',
+      direction: '',
+    }),
+  }),
+  actions: {
+    paginate() {
+      const $paginationStore = usePaginationStore();
+      Loading.show();
+      $paginationStore.setPageDisable(true);
+      $paginationStore.setFilterDisable(true);
+      TestService.paginate($paginationStore.filter, $paginationStore.page - 1, this.pagination.perPage, 'createdAt', 'DESC')
+        .then((response) => {
+          this.rows = response.data.content;
+          this.pagination.totalItems = response.data.totalItems - response.data.content.length;
+          this.pagination.totalPages = Math.ceil(response.data.totalItems
+            / this.pagination.perPage);
+          $paginationStore.setPageDisable(false);
+          $paginationStore.setFilterDisable(false);
+        })
+        .catch(() => {
+          Notify.create({
+            message: 'The server couldn\'t process your request',
+            type: 'negative',
+          });
+        })
+        .finally(() => {
+          Loading.hide();
+        });
     },
-    {
-      name: 'title',
-      label: 'Title',
-      field: 'title',
-      align: 'left',
+    async findById(uuid: string) {
+      Loading.show();
+      await TestService.findById(uuid)
+        .then((response) => {
+          this.test = response.data;
+        })
+        .catch(() => {
+          Notify.create({
+            message: 'The server couldn\'t process your request',
+            type: 'negative',
+          });
+        })
+        .finally(() => {
+          Loading.hide();
+        });
     },
-    {
-      name: 'status',
-      label: 'Status',
-      field: 'status',
-      align: 'left',
+    update() {
+      Loading.show();
+      TestService.update(this.test)
+        .then((response) => {
+          if (response.status === 201 || response.status === 200) {
+            Notify.create({
+              message: 'Test updated successfully!',
+              type: 'positive',
+            });
+          }
+          this.router.push({
+            path: '/tests',
+          });
+        })
+        .catch(() => {
+          Notify.create({
+            message: 'The server couldn\'t process your request',
+            type: 'negative',
+          });
+        })
+        .finally(() => {
+          Loading.hide();
+        });
     },
-    {
-      name: 'createdAt',
-      label: 'Created At',
-      field: 'createdAt',
-      align: 'left',
-      format: (val: string) => `${val.split('T')[0].replace(/(\d{4})-(\d{2})-(\d{2}).*/, '$3/$2/$1')} ${val.split('T')[1]}`,
+    async save() {
+      Loading.show();
+      TestService.save(this.test)
+        .then((response) => {
+          if (response.status === 201 || response.status === 200) {
+            Notify.create({
+              message: 'Test created successfully!',
+              type: 'positive',
+            });
+          }
+          this.router.push({
+            path: '/tests/save',
+            query: { uuid: response.data.id },
+          });
+        })
+        .catch(() => {
+          Notify.create({
+            message: 'The server couldn\'t process your request',
+            type: 'negative',
+          });
+        })
+        .finally(() => {
+          Loading.hide();
+        });
     },
-    {
-      name: 'updatedAt',
-      label: 'Updated At',
-      field: 'updatedAt',
-      align: 'left',
-      format: (val: string) => `${val.split('T')[0].replace(/(\d{4})-(\d{2})-(\d{2}).*/, '$3/$2/$1')} ${val.split('T')[1]}`,
+    addObjective() {
+      this.test.objectives.push(new TestObjective());
     },
-    {
-      name: 'actions',
-      label: 'Actions',
-      field: '',
-      align: 'left',
+    removeObjective(index: number): void {
+      this.test.objectives = this.test.objectives.filter((x, y) => index !== y);
     },
-  ];
-  const pagination = ref({
-    filter: '',
-    totalItems: 11,
-    totalPages: 1,
-    page: 0,
-    perPage: 10,
-    sortBy: '',
-    direction: '',
-  });
-  const $quasar = useQuasar();
-  const $paginationStore = usePaginationStore();
-  // actions
-  const save = () => {
-    TestService.save(test.value).then((response) => {
-      console.log('sucesso');
-      console.log(response);
-    }).catch((response) => {
-      console.log('errou');
-      console.log(response);
-    });
-  };
-  const paginate = () => {
-    $quasar.loading.show();
-    $paginationStore.setPageDisable(true);
-    $paginationStore.setFilterDisable(true);
-    TestService.paginate($paginationStore.filter, $paginationStore.page - 1, pagination.value.perPage, '', '')
-      .then((response) => {
-        rows.value = response.data.content;
-        pagination.value.totalItems = response.data.totalItems - response.data.content.length;
-        // eslint-disable-next-line max-len
-        pagination.value.totalPages = Math.ceil(response.data.totalItems / pagination.value.perPage);
-        $paginationStore.setPageDisable(false);
-        $paginationStore.setFilterDisable(false);
-      })
-      .catch((response) => {
-        console.log(response.data);
-      })
-      .finally(() => {
-        $quasar.loading.hide();
-      });
-  };
-  return {
-    test,
-    columns,
-    rowKey,
-    pagination,
-    rows,
-    save,
-    paginate,
-  };
+  },
 });

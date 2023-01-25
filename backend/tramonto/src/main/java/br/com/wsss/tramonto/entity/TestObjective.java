@@ -16,6 +16,11 @@ import lombok.Setter;
 @Setter
 public class TestObjective extends BaseEntity {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "TEST_ID")
 	private Test test;

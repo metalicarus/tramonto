@@ -14,6 +14,7 @@ export class VectorCateogry {
 
   status = '';
 }
+
 export class TestVector {
   id = '';
 
@@ -39,19 +40,21 @@ export class TestVector {
 }
 
 class Test implements TestDto {
+  // eslint-disable-next-line no-unreachable
   id = '';
 
   title = '';
 
   description = '';
 
-  objectives: Array<TestObjective> = [];
-
   initialDate = '';
 
   finalDate = '';
 
-  initialAndFinalDate = { to: '', from: '' };
+  initialAndFinalDate = {
+    to: '',
+    from: '',
+  };
 
   estimatedTime = '';
 
@@ -75,27 +78,24 @@ class Test implements TestDto {
 
   vectors: Array<TestVector> = [];
 
+  objectives: Array<TestObjective> = [];
+
   constructor() {
     this.initialAndFinalDate.from = date.formatDate(Date.now(), 'YYYY-MM-DD');
-    this.addObjective();
+    this.objectives.push(new TestObjective());
     this.addVector();
   }
 
   formatInitialAndFinalDate(): string {
+    if (this.id !== null || true) {
+      return `From: ${this.initialDate} To: ${this.finalDate}`;
+    }
     return `From: ${this.initialAndFinalDate.from} To: ${this.initialAndFinalDate.to}`;
   }
 
   updateDates(): void {
     this.initialDate = date.formatDate(this.initialAndFinalDate.from, 'YYYY-MM-DDTHH:mm:ss');
     this.finalDate = date.formatDate(this.initialAndFinalDate.to, 'YYYY-MM-DDTHH:mm:ss');
-  }
-
-  addObjective(): void {
-    this.objectives.push(new TestObjective());
-  }
-
-  removeObjective(index: number): void {
-    this.objectives = this.objectives.filter((x, y) => index !== y);
   }
 
   addVector(): void {
@@ -106,4 +106,5 @@ class Test implements TestDto {
     this.vectors = this.vectors.filter((x, y) => index !== y);
   }
 }
+
 export default new Test();

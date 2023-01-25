@@ -28,7 +28,14 @@
                size="sm"
                color="primary"
                icon="edit"
-               @click="$router.push({ path: props.editRoute, query: { uuid: props.row.id }});"
+               @click="$router.push({ path: editRoute, query: { uuid: props.row.id }});"
+        />
+        <q-btn flat
+               rounded
+               size="sm"
+               color="primary"
+               icon="bolt"
+               @click="$router.push({ path: editRoute, query: { uuid: props.row.id }});"
         />
       </q-td>
     </template>
@@ -61,6 +68,9 @@ const $store = useTestStore();
 const $router = useRouter();
 const refresh = () => {
   $store.paginate();
+};
+const redirect = () => {
+  $router.push('/');
 };
 const setPagination = () => {
   const { query } = $router.currentRoute.value;

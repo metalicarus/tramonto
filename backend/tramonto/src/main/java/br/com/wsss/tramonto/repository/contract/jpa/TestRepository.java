@@ -17,6 +17,10 @@ import br.com.wsss.tramonto.entity.Test;
 public interface TestRepository extends JpaRepository<Test, UUID> {
 	
 	@Modifying
+	@Query(value= "DELETE FROM TestStrategy ts WHERE ts.pk.test.id = :testId")
+	void deleteAllStrategies(@Param("testId") UUID testId);
+	
+	@Modifying
 	@Query(value= "DELETE FROM TestChecklist tc WHERE tc.pk.test.id = :testId")
 	void deleteAllChecklists(@Param("testId") UUID testId);
 	

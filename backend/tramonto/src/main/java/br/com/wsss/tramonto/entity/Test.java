@@ -77,16 +77,20 @@ public class Test extends BaseEntity {
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "TYPE", referencedColumnName = "ID", nullable = false)
 	private TestType type;
+	
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "OWNER", referencedColumnName = "ID", nullable = false)
+	private User owner;
 
-	@OneToMany(mappedBy = "pk.test", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	private Set<TestChecklist> checklists =  new HashSet<>();
+	@OneToMany(mappedBy = "pk.test", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private Set<TestChecklist> checklists = new HashSet<>();
 
 	@OneToMany(mappedBy = "test", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private Set<TestObjective> objectives = new HashSet<>();
-	
-	@OneToMany(mappedBy = "pk.test", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	private Set<TestStrategy> strategies =  new HashSet<>();
-	
+
+	@OneToMany(mappedBy = "pk.test", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private Set<TestStrategy> strategies = new HashSet<>();
+
 	public void addObjectives(Set<TestObjective> objs) {
 		this.objectives.clear();
 		this.objectives.addAll(objs);
@@ -99,27 +103,28 @@ public class Test extends BaseEntity {
 		this.setTestInObjectives();
 		this.setTestInPkStrategies();
 	}
-	
+
 	@PreUpdate
 	public void preUpdate() {
 		this.setTestInPkChecklist();
 		this.setTestInObjectives();
 		this.setTestInPkStrategies();
 	}
-	
+
 	private void setTestInPkStrategies() {
 		strategies.forEach(x -> {
 			x.getPk().setTest(this);
 		});
 	}
-	 
+
 	private void setTestInPkChecklist() {
 		checklists.forEach(x -> {
 			x.getPk().setTest(this);
 		});
 	}
+
 	private void setTestInObjectives() {
-		objectives.forEach(x -> {			
+		objectives.forEach(x -> {
 			x.setTest(this);
 		});
 	}

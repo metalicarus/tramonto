@@ -26,7 +26,13 @@ export default boot(({ app }) => {
     }
     return config;
   });
-
+  api.interceptors.response.use((response) => response, (onReject) => {
+    if (onReject.response.status === 401) {
+      Cookies.remove('tramontoSecurityAccessToken');
+      window.location.reload();
+    }
+    return onReject;
+  });
   // for use inside Vue files (Options API) through this.$axios and this.$api
   app.config.globalProperties.$axios = axios;
   // ^ ^ ^ this will allow you to use this.$axios (for Vue Options API form)

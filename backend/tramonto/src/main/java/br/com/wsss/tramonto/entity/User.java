@@ -1,6 +1,5 @@
 package br.com.wsss.tramonto.entity;
 
-import java.util.Collection;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -10,26 +9,28 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table(name = "USERS")
-public class User extends BaseEntity implements UserDetails {
+public class User extends BaseEntity {
 	
+
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 6429450831431788484L;
 
 	@Column(name= "FIRST_NAME", nullable= false)
 	private String firstName;
@@ -50,39 +51,15 @@ public class User extends BaseEntity implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "ROLE_ID"))
     private Set<Role> roles;
 
-	@Override
-	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return this.roles;
-	}
-
-	@Override
-	public String getUsername() {
-		return email;
-	}
-
-	@Override
-	public boolean isAccountNonExpired() {
-		return true;
-	}
-
-	@Override
-	public boolean isAccountNonLocked() {		
-		return true;
-	}
-
-	@Override
-	public boolean isCredentialsNonExpired() {
-		return true;
-	}
-
-	@Override
-	public boolean isEnabled() {
-		return true;
-	}
-
-	@Override
-	public String getPassword() {
-		return password;
+	public User(User u) {
+		this.firstName = u.getFirstName();
+		this.lastName = u.getLastName();
+		this.email = u.getEmail();
+		this.roles = u.getRoles();
+		this.createdAt = u.getCreatedAt();
+		this.updatedAt = u.getUpdatedAt();
+		this.status = u.getStatus();
+		this.setId(u.getId());
 	}
 
 }

@@ -67,12 +67,26 @@
           </q-step>
           <q-step
             :active-icon="steps.step4.activeIcon"
-            :disable="test.id === ''"
             :done="steps.step4.done"
             :done-color="steps.step4.doneColor"
             :icon="steps.step4.icon"
             :name="steps.step4.name"
             :title="steps.step4.title"
+          >
+            <share-step v-if="$authStore.selectableUsers.length > 0"
+                        :selectable-users="$authStore.selectableUsers"
+                        :selected-users="[]"
+                        @update-selected-users="test.testers = $event"
+            />
+          </q-step>
+          <q-step
+            :active-icon="steps.step5.activeIcon"
+            :disable="test.id === ''"
+            :done="steps.step5.done"
+            :done-color="steps.step5.doneColor"
+            :icon="steps.step5.icon"
+            :name="steps.step5.name"
+            :title="steps.step5.title"
           >
             <execution-step v-if="$categoryStore.vectors.length > 0"
                             :model="test"
@@ -101,7 +115,7 @@ import AdequacyStep from 'components/test/steps/AdequacyStep.vue';
 import CheckStep from 'components/test/steps/CheckStep.vue';
 import PrepareStep from 'components/test/steps/PrepareStep.vue';
 import ExecutionStep from 'components/test/steps/ExecutionStep.vue';
-import { onBeforeMount, onMounted, ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useTestStore } from 'stores/test.store';
 import { useApproachStore } from 'stores/approach.store';
 import { useAggressionStore } from 'stores/aggression.store';
@@ -111,6 +125,9 @@ import { useTypeStore } from 'stores/types.store';
 import { useChecklistStore } from 'stores/checklist.store';
 import { storeToRefs } from 'pinia';
 import { useRouter } from 'vue-router';
+import { TESTS_SHARE } from 'src/consts/RoutesConsts';
+import { useAuthenticationStore } from 'stores/authentication.store';
+import ShareStep from 'components/test/steps/ShareStep.vue';
 
 const props = defineProps({
   uuid: {
@@ -155,6 +172,15 @@ const steps = ref({
     done: false,
   },
   step4: {
+    name: 4,
+    title: 'Sharing',
+    icon: 'fas fa-share-nodes',
+    activeIcon: 'edit',
+    error: false,
+    doneColor: 'green',
+    done: false,
+  },
+  step5: {
     name: 5,
     title: 'Execution',
     icon: 'fas fa-hourglass-half',
@@ -172,9 +198,12 @@ const $approachStore = useApproachStore();
 const $aggressionStore = useAggressionStore();
 const $strategyStore = useStrategyStore();
 const $categoryStore = useCategoryStore();
+const $authStore = useAuthenticationStore();
 const $typeStore = useTypeStore();
 const $checklistStore = useChecklistStore();
 const { test } = storeToRefs($testStore);
+const $router = useRouter();
+const currentRoute = ref($router.currentRoute.value.path);
 
 const validateStep = (newVal: never, oldVal: never) => {
   form.value.validate()
@@ -191,7 +220,7 @@ const validateStep = (newVal: never, oldVal: never) => {
         steps.value.step3.error = test.value.strategies.length === 0;
         steps.value.step3.done = test.value.strategies.length > 0;
       }
-      if (oldVal === steps.value.step4.name) steps.value.step4.error = !response;
+      if (oldVal === steps.value.step5.name) steps.value.step5.error = !response;
     });
 };
 const submit = () => {
@@ -203,13 +232,32 @@ const submit = () => {
 };
 const setTrueInChecklist = () => {
   test.value.checklists.forEach((ch) => {
-    $checklistStore.checklists.find((x) => x.id === ch.id).check = true;
+    const find = $checklistStore.checklists.find((x) => x.id === ch.id);
+    if (find) {
+      find.check = true;
+    }
+  });
+};
+const setTrueInTesters = () => {
+  test.value.testers.forEach((ch) => {
+    const find = $authStore.selectableUsers.find((x) => x.id === ch.id);
+    if (find) {
+      find.check = true;
+    }
   });
 };
 const setTrueInStrategy = () => {
   test.value.strategies.forEach((st) => {
-    $strategyStore.strategies.find((x) => x.id === st.id).check = true;
+    const find = $strategyStore.strategies.find((x) => x.id === st.id);
+    if (find) {
+      find.check = true;
+    }
   });
+};
+const setStep = () => {
+  if (currentRoute.value === TESTS_SHARE) {
+    step.value = 4;
+  }
 };
 onMounted(async () => {
   if (props.uuid.length > 0) {
@@ -221,8 +269,11 @@ onMounted(async () => {
   $typeStore.findAllTypes();
   await $checklistStore.findAllChecklists();
   await $strategyStore.findAllStrategies();
+  await $authStore.findDifferentUsers();
   setTrueInChecklist();
   setTrueInStrategy();
+  setTrueInTesters();
+  setStep();
 });
 </script>
 

@@ -4,6 +4,7 @@ import java.time.Instant;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -16,6 +17,16 @@ import br.com.wsss.tramonto.exception.TramontoException;
 @RestControllerAdvice
 public class TramontoExceptionHandler extends ResponseEntityExceptionHandler {
 
+	
+	@ExceptionHandler(value = { DataIntegrityViolationException.class })
+	@ResponseStatus(value = HttpStatus.NOT_FOUND)
+	public ResponseEntity<TramontoStandardError> tramontoJwt(DataIntegrityViolationException exception, HttpServletRequest request) {
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+				.body(TramontoStandardError.builder().status(HttpStatus.BAD_REQUEST.value())
+						.message(exception.getMessage()).error(exception.getCause().getMessage())
+						.timestamp(Instant.now()).build());
+	}
+	
 	@ExceptionHandler(value = { TramontoException.class })
 	@ResponseStatus(value = HttpStatus.NOT_FOUND)
 	public ResponseEntity<TramontoStandardError> tramontoJwt(TramontoException exception, HttpServletRequest request) {

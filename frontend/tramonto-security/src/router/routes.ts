@@ -6,7 +6,7 @@ import {
   STRATEGIES_PAGINATE,
   STRATEGIES_SAVE,
   TESTS_PAGINATE,
-  TESTS_SAVE, UNAUTHORIZED,
+  TESTS_SAVE, TESTS_SHARE, UNAUTHORIZED,
   VECTORS_CATEGORIES_PAGINATE,
   VECTORS_CATEGORIES_SAVE,
 } from 'src/consts/RoutesConsts';
@@ -92,6 +92,14 @@ const routes: RouteRecordRaw[] = [
         component: () => import('pages/tests/SavePage.vue'),
         meta: {
           type: 'save',
+          role: ROLE_TESTER_ADVANCED,
+        },
+      },
+      {
+        path: TESTS_SHARE,
+        component: () => import('pages/tests/SavePage.vue'),
+        meta: {
+          type: 'share',
           role: ROLE_TESTER_ADVANCED,
         },
       },

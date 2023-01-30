@@ -232,7 +232,6 @@ const setRetestDate = computed({
     return dtFn.formatDate(test.value.retestDate, 'YYYY/MM/DDT00:00:00');
   },
   set(value) {
-    console.log(value);
     if (value !== null) {
       test.value.retestDate = dtFn.formatDate(value, 'YYYY-MM-DDT00:00:00');
     }

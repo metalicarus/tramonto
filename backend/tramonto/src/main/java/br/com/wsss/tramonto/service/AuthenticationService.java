@@ -13,8 +13,11 @@ import br.com.wsss.tramonto.configuration.JwtService;
 import br.com.wsss.tramonto.dto.input.AuthenticationRequestDto;
 import br.com.wsss.tramonto.dto.input.AuthenticationResponseDto;
 import br.com.wsss.tramonto.dto.input.RegisterRequestDto;
+import br.com.wsss.tramonto.dto.input.UserDto;
+import br.com.wsss.tramonto.entity.CustomUserDetails;
 import br.com.wsss.tramonto.entity.Role;
 import br.com.wsss.tramonto.entity.User;
+import br.com.wsss.tramonto.mapper.contract.UserMapper;
 import br.com.wsss.tramonto.repository.contract.jpa.RoleRepository;
 import br.com.wsss.tramonto.repository.contract.jpa.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,16 +26,18 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AuthenticationService {
 
+	private final UserMapper mapper;
 	private final RoleRepository roleRepository;
 	private final UserRepository userRepository;
 	private final PasswordEncoder passwordEncoder;
 	private final JwtService jwtService;
 	private final AuthenticationManager authenticationManager;
 	
-	public User findUserByToken(String token) {
+	public UserDto findUserByToken(String token) {
 		String jwt = (token.contains("Bearer")) ? token.substring(7) : token;
-		String userEmail = jwtService.extractUsername(jwt);	
-		return userRepository.findByEmail(userEmail).get();
+		String userEmail = jwtService.extractUsername(jwt);
+		CustomUserDetails custom = new CustomUserDetails(userRepository.findByEmail(userEmail).get());
+		return mapper.customToUserDto(custom);
 	}
 
 	public AuthenticationResponseDto register(RegisterRequestDto request) {
@@ -42,7 +47,7 @@ public class AuthenticationService {
 			if (role.isPresent())
 				roles.add(role.get());
 		});
-		User user = User.builder()
+		CustomUserDetails user = (CustomUserDetails) User.builder()
 						.firstName(request.getFirstname())
 						.lastName(request.getLastname())
 						.email(request.getEmail())
@@ -56,7 +61,7 @@ public class AuthenticationService {
 		authenticationManager
 				.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
 		User user = userRepository.findByEmail(request.getEmail()).orElseThrow();
-		String jwtToken = jwtService.generateToken(user);
+		String jwtToken = jwtService.generateToken(new CustomUserDetails(user));
 		return AuthenticationResponseDto.builder().token(jwtToken).build();
 	}
 }

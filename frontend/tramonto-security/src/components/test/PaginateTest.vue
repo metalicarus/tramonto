@@ -35,7 +35,7 @@
                size="sm"
                color="primary"
                icon="bolt"
-               @click="$router.push({ path: editRoute, query: { uuid: props.row.id }});"
+               @click="$router.push({ path: shareRoute, query: { uuid: props.row.id }});"
         />
       </q-td>
     </template>
@@ -56,6 +56,10 @@ import UrlPagination from '../baseComponents/urlPagination/UrlPagination.vue';
 
 const props = defineProps({
   editRoute: {
+    type: String,
+    required: true,
+  },
+  shareRoute: {
     type: String,
     required: true,
   },

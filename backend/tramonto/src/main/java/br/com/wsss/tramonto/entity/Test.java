@@ -90,6 +90,9 @@ public class Test extends BaseEntity {
 
 	@OneToMany(mappedBy = "pk.test", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private Set<TestStrategy> strategies = new HashSet<>();
+	
+	@OneToMany(mappedBy = "pk.test", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private Set<TestTester> testers = new HashSet<>();
 
 	public void addObjectives(Set<TestObjective> objs) {
 		this.objectives.clear();
@@ -109,8 +112,15 @@ public class Test extends BaseEntity {
 		this.setTestInPkChecklist();
 		this.setTestInObjectives();
 		this.setTestInPkStrategies();
+		this.setTestInPkTesters();
 	}
 
+	private void setTestInPkTesters() {
+		testers.forEach(x -> {
+			x.getPk().setTest(this);
+		});
+	}
+	
 	private void setTestInPkStrategies() {
 		strategies.forEach(x -> {
 			x.getPk().setTest(this);

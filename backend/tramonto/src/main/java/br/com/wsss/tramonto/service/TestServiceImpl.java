@@ -26,25 +26,20 @@ import br.com.wsss.tramonto.repository.contract.jpa.TestChecklistRepository;
 import br.com.wsss.tramonto.repository.contract.jpa.TestObjectiveRepository;
 import br.com.wsss.tramonto.repository.contract.jpa.TestRepository;
 import br.com.wsss.tramonto.repository.contract.jpa.TestStrategyRepository;
+import br.com.wsss.tramonto.repository.contract.jpa.TestTesterRepository;
 import br.com.wsss.tramonto.service.contract.TestService;
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class TestServiceImpl<C> implements TestService {
 
 	private final TestObjectiveRepository objectRepository;
 	private final TestChecklistRepository checklistRepository;
 	private final TestStrategyRepository strategyRepository;
+	private final TestTesterRepository testerRepository;
 	private final TestRepository repository;
 	private final TestMapper mapper;
-
-	public TestServiceImpl(TestObjectiveRepository objectRepository, TestChecklistRepository checklistRepository,
-			TestStrategyRepository strategyRepository, TestRepository repository, TestMapper mapper) {
-		this.objectRepository = objectRepository;
-		this.checklistRepository = checklistRepository;
-		this.strategyRepository = strategyRepository;
-		this.repository = repository;
-		this.mapper = mapper;
-	}
 
 	@Override
 	public Set<TestDto> findAll() {
@@ -61,8 +56,7 @@ public class TestServiceImpl<C> implements TestService {
 	@Override
 	public TestDto update(TestDto dto) {
 		Object currentUser = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		
-		
+
 		Test externalEntity = mapper.testDtoToTest(dto);
 		externalEntity.preUpdate();
 		Test dbEntity = repository.findById(dto.getId()).get();
@@ -70,6 +64,7 @@ public class TestServiceImpl<C> implements TestService {
 		deleteOrphanRelationships(dbEntity.getChecklists(), externalEntity.getChecklists(), checklistRepository);
 		deleteOrphanRelationships(dbEntity.getStrategies(), externalEntity.getStrategies(), strategyRepository);
 		deleteOrphanRelationships(dbEntity.getObjectives(), externalEntity.getObjectives(), objectRepository);
+		deleteOrphanRelationships(dbEntity.getTesters(), externalEntity.getTesters(), testerRepository);
 		externalEntity.setOwner((User) currentUser);
 
 		repository.save(externalEntity);
@@ -94,8 +89,10 @@ public class TestServiceImpl<C> implements TestService {
 	@Override
 	public PageResponse<TestDto> paginate(String filter, Integer page, Integer perPage, String sortBy,
 			Direction direction) {
+		User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
 		Pageable request = PageRequest.of(page, perPage, Sort.by(direction, sortBy));
-		Page<Test> pages = repository.findByTitleContaining(filter, request);
+		Page<Test> pages = repository.findByUser(currentUser.getId().toString(), filter, request);
 		return new PageResponse<TestDto>(pages.getContent().stream().map(x -> {
 			return mapper.toPage(x);
 		}).collect(Collectors.toList()), request, pages.getTotalElements(), pages.getNumber());

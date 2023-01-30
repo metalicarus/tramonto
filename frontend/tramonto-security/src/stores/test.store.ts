@@ -31,7 +31,7 @@ export const useTestStore = defineStore('tests', {
       Loading.show();
       $paginationStore.setPageDisable(true);
       $paginationStore.setFilterDisable(true);
-      TestService.paginate($paginationStore.filter, $paginationStore.page - 1, this.pagination.perPage, 'createdAt', 'DESC')
+      TestService.paginate($paginationStore.filter, $paginationStore.page - 1, this.pagination.perPage, 'created_at', 'DESC')
         .then((response) => {
           this.rows = response.data.content;
           this.pagination.totalItems = response.data.totalItems - response.data.content.length;

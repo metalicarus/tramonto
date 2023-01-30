@@ -5,15 +5,15 @@
     />
     <q-card bordered class="q-pa-lg" flat>
       <add-test :next-route="'/'"
+                :previous-route="previousRoute"
                 :uuid="uuid === undefined ? '' : uuid"
-                :previous-route="'/'"
       />
     </q-card>
   </q-page>
 </template>
 
 <script lang="ts">
-import { ANCHOR_PAGE, TESTS_ICON } from 'src/consts/RoutesConsts';
+import { ANCHOR_PAGE, TESTS_ICON, TESTS_PAGINATE } from 'src/consts/RoutesConsts';
 import { TESTS } from 'src/consts/LabelsConsts';
 import AddTest from 'components/test/AddTest.vue';
 import { useRouter } from 'vue-router';
@@ -21,12 +21,16 @@ import TramontoBreadcrumb from '../../components/baseComponents/tramontoBreadcru
 
 export default {
   name: 'SavePage',
-  components: { AddTest, TramontoBreadcrumb },
+  components: {
+    AddTest,
+    TramontoBreadcrumb,
+  },
   setup() {
     const router = useRouter();
     const { uuid } = router.currentRoute.value.query;
     return {
       uuid,
+      previousRoute: TESTS_PAGINATE,
       breadcrumbOptions: [
         {
           icon: 'home',

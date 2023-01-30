@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import br.com.wsss.tramonto.controller.v1.handle.TramontoExceptionHandler;
+import io.jsonwebtoken.ExpiredJwtException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
@@ -58,7 +59,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 				}
 			}
 			filterChain.doFilter(request, response);
-		} catch (Exception e) {
+		} catch (ExpiredJwtException e) {
 			handleExpirationToken(request, response);
 			return;
 		}

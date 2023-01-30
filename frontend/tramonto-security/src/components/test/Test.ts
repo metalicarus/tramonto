@@ -4,6 +4,7 @@ import { ToolDto } from 'src/services/dtos/Tool.dto';
 import TestDto from 'src/services/dtos/Test.dto';
 import { TestObjective } from 'stores/dtos/TestObjective.dto';
 import { Checklist } from 'stores/dtos/Checklist.dto';
+import { UserDto } from 'stores/dtos/UserDto';
 
 export class VectorCateogry {
   id = '';
@@ -80,6 +81,8 @@ class Test implements TestDto {
 
   objectives: Array<TestObjective> = [];
 
+  testers: Array<UserDto> = [];
+
   constructor() {
     this.initialAndFinalDate.from = date.formatDate(Date.now(), 'YYYY-MM-DD');
     this.objectives.push(new TestObjective());
@@ -87,6 +90,7 @@ class Test implements TestDto {
   }
 
   formatInitialAndFinalDate(): string {
+    // eslint-disable-next-line no-constant-condition
     if (this.id !== null || true) {
       return `From: ${this.initialDate} To: ${this.finalDate}`;
     }

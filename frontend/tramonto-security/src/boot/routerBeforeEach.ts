@@ -34,7 +34,7 @@ export default boot(({
       await $authStore.findUser();
     } else if (to.path !== '/login' && to.path !== '/') {
       const $user = $authStore.user;
-      const roles = toRaw($user?.authorities);
+      const roles = toRaw($user?.roles);
       const isAuthorized = roles?.some((role) => role.routes.includes(to.path));
       if (!isAuthorized) {
         Notify.create({

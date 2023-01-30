@@ -5,4 +5,5 @@ export default interface UserDetailDto {
   status: string;
   id: string;
   authorities: Array<Autority>;
+  check: false;
 };

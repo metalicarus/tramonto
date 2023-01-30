@@ -1,8 +1,8 @@
 <template>
-  <q-page  class="q-ma-lg">
+  <q-page class="q-ma-lg">
     <div class="q-pa-md q-gutter-sm">
       <q-breadcrumbs>
-        <q-breadcrumbs-el icon="home" :to="anchorRoute"/>
+        <q-breadcrumbs-el :to="anchorRoute" icon="home"/>
         <q-breadcrumbs-el :icon="icon"
                           :label="label"
                           :to="mainRoute"
@@ -10,23 +10,23 @@
       </q-breadcrumbs>
     </div>
     <div class="q-pa-sm">
-      <q-btn outline
+      <q-btn :icon-right="icon"
              color="primary"
-             :icon-right="icon"
              label="New"
+             outline
              @click="this.$router.push(editRoute)"
       >
       </q-btn>
     </div>
     <q-card bordered class="q-pa-lg" flat>
-      <paginate-test :label="label" :edit-route="editRoute" />
+      <paginate-test :edit-route="editRoute" :label="label" :share-route="shareRoute"/>
     </q-card>
   </q-page>
 </template>
 
 <script>
 import {
-  ANCHOR_PAGE, TESTS_ICON, TESTS_PAGINATE, TESTS_SAVE,
+  ANCHOR_PAGE, TESTS_ICON, TESTS_PAGINATE, TESTS_SAVE, TESTS_SHARE,
 } from '../../consts/RoutesConsts';
 import { TESTS } from '../../consts/LabelsConsts';
 import PaginateTest from '../../components/test/PaginateTest.vue';
@@ -41,6 +41,7 @@ export default {
       mainRoute: TESTS_PAGINATE,
       anchorRoute: ANCHOR_PAGE,
       editRoute: TESTS_SAVE,
+      shareRoute: TESTS_SHARE,
     };
   },
 };

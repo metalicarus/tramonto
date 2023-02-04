@@ -5,6 +5,7 @@ import TestDto from 'src/services/dtos/Test.dto';
 import { TestObjective } from 'stores/dtos/TestObjective.dto';
 import { Checklist } from 'stores/dtos/Checklist.dto';
 import { UserDto } from 'stores/dtos/UserDto';
+import BaseDto from 'stores/dtos/Base.dto';
 
 export class VectorCateogry {
   id = '';
@@ -16,7 +17,7 @@ export class VectorCateogry {
   status = '';
 }
 
-export class TestVector {
+export class TestVector implements BaseDto {
   id = '';
 
   title = '';
@@ -38,6 +39,8 @@ export class TestVector {
   createdAt = '';
 
   updatedAt = '';
+
+  status = 'ACTIVE';
 }
 
 class Test implements TestDto {
@@ -71,6 +74,8 @@ class Test implements TestDto {
 
   generalObservation = '';
 
+  belongsToCurrentUser = true;
+
   checklists: Array<Checklist> = [];
 
   strategies: Array<StrategyDto> = [];
@@ -86,7 +91,7 @@ class Test implements TestDto {
   constructor() {
     this.initialAndFinalDate.from = date.formatDate(Date.now(), 'YYYY-MM-DD');
     this.objectives.push(new TestObjective());
-    this.addVector();
+    this.vectors.push(new TestVector());
   }
 
   formatInitialAndFinalDate(): string {

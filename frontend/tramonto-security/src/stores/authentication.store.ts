@@ -15,6 +15,12 @@ export const useAuthenticationStore = defineStore('auth', {
       ? Cookies.get('tramontoSecurityAccessToken') : state.token),
   },
   actions: {
+    userRolesContain(roles: Array<string>) {
+      return this.user?.roles.some((x) => {
+        const index = roles.findIndex((y) => y === x.role);
+        return index !== -1;
+      });
+    },
     async findDifferentUsers() {
       await AuthenticationService.findDifferentUsers()
         .then((response) => {

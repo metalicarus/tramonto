@@ -18,6 +18,7 @@
                    :key="itemIndex">
              <q-item-section side top>
                <q-checkbox v-model="item.check"
+                           :disable="!belongsToCurrentUser"
                            @update:model-value="selectChecklist"
                />
              </q-item-section>
@@ -41,6 +42,10 @@ import { Checklist } from 'stores/dtos/Checklist.dto';
 export default {
   name: 'CheckStep',
   props: {
+    belongsToCurrentUser: {
+      type: Boolean,
+      required: true,
+    },
     types: {
       type: Array,
       required: true,

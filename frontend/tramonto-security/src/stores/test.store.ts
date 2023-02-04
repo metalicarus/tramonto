@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import TestPaginationDto from 'stores/dtos/TestPagination.dto';
 import TestTableDefinition from 'stores/TestTableDefinition';
 import { Loading, Notify, QTableProps } from 'quasar';
-import Test from 'components/test/Test';
+import Test, { TestVector } from 'components/test/Test';
 import TestDto from 'src/services/dtos/Test.dto';
 import { usePaginationStore } from 'stores/paginate.store';
 import TestService from 'src/services/test.service';
@@ -114,6 +114,9 @@ export const useTestStore = defineStore('tests', {
         .finally(() => {
           Loading.hide();
         });
+    },
+    addVector() {
+      this.test.vectors.push(new TestVector());
     },
     addObjective() {
       this.test.objectives.push(new TestObjective());

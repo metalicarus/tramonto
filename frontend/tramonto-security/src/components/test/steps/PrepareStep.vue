@@ -12,6 +12,7 @@
             >
               <q-item-section side top>
                 <q-checkbox v-model="item.check"
+                            :disable="!belongsToCurrentUser"
                             @update:model-value="selectStrategy"
                 />
               </q-item-section>
@@ -51,6 +52,10 @@ import { StrategyDto } from 'src/services/dtos/StrategyInput.dto';
 export default {
   name: 'PrepareStep',
   props: {
+    belongsToCurrentUser: {
+      type: Boolean,
+      required: true,
+    },
     strategies: {
       type: Array as PropType<Array<StrategyDto>>,
       required: true,

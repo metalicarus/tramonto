@@ -9,6 +9,7 @@ export const VECTORS_CATEGORIES_SAVE = '/vector-categories/save';
 export const VECTORS_CATEGORIES_UPDATE = '/vector-categories/update/:uuid';
 export const TESTS_SAVE = '/tests/save';
 export const TESTS_SHARE = '/tests/share';
+export const TESTS_EXECUTION = '/tests/execution';
 export const TESTS_PAGINATE = '/tests';
 export const TESTS_ICON = 'fa fa-flask-vial';
 export const CHECKLISTS_PAGINATE = '/checklists';

@@ -11,6 +11,7 @@
       </div>
       <div class="col-12 col-md-8">
         <q-input v-model="test.title"
+                 :disable="!test.belongsToCurrentUser"
                  :rules="[ val => val && val.length > 0 || 'Please type something']"
                  label="Title"
                  outlined
@@ -21,6 +22,7 @@
     <div class="row q-gutter-md">
       <div class="col-12 col-md-12">
         <q-input v-model="test.description"
+                 :disable="!test.belongsToCurrentUser"
                  :rules="[ val => val && val.length > 0 || 'Please type something']"
                  label="Description"
                  outlined
@@ -32,6 +34,7 @@
     <div v-for="(item, index) in test.objectives" :key="index" class="row q-gutter-md">
       <div class="col-12 col-md-9">
         <q-input v-model="item.objective"
+                 :disable="!test.belongsToCurrentUser"
                  :label="`Objective ${index + 1}`"
                  :rules="[ val => val && val.length > 0 || 'Please type something']"
                  outlined
@@ -44,6 +47,7 @@
                outline
                size="large"
                @click="$testStore.addObjective()"
+               :disable="!test.belongsToCurrentUser"
         />
       </div>
       <div class="col-4 col-md-1">
@@ -53,12 +57,14 @@
                outline
                size="large"
                @click="$testStore.removeObjective(index)"
+               :disable="!test.belongsToCurrentUser"
         />
       </div>
     </div>
     <div class="row q-gutter-md">
       <div class="col-12 col-md-4">
         <q-input :model-value="initialAndFinalDateFormat"
+                 :disable="!test.belongsToCurrentUser"
                  label="Initial and Final date"
                  outlined
                  stack-label
@@ -71,6 +77,7 @@
                 transition-show="scale"
               >
                 <q-date v-model="initialAndFinalDateRange"
+                        :disable="!test.belongsToCurrentUser"
                         range>
                   <div class="row items-center justify-end">
                     <q-btn v-close-popup color="primary" flat label="Close"/>
@@ -82,7 +89,8 @@
         </q-input>
       </div>
       <div class="col-12 col-md-2">
-        <q-input v-model="test.estimatedTime"
+        <q-input :disable="!test.belongsToCurrentUser"
+                 v-model="test.estimatedTime"
                  :rules="[ val => val && val.length > 0 || 'Please type something']"
                  label="Estimated Time"
                  mask="##:##:##"
@@ -92,6 +100,7 @@
       </div>
       <div class="col-12 col-md-2">
         <q-checkbox v-model="test.retest"
+                    :disable="!test.belongsToCurrentUser"
                     label="Re-test"
                     outlined
                     stack-label
@@ -99,6 +108,7 @@
       </div>
       <div v-if="test.retest" class="col-12 col-md-2">
         <q-input :model-value="retestDateFormat"
+                 :disable="!test.belongsToCurrentUser"
                  label="Re-test Date"
                  outlined
                  stack-label
@@ -111,6 +121,7 @@
                 transition-show="scale"
               >
                 <q-date v-model="setRetestDate"
+                        :disable="!test.belongsToCurrentUser"
                         :options="minRestestDate">
                   <div class="row items-center justify-end">
                     <q-btn v-close-popup color="primary" flat label="Close"/>
@@ -128,6 +139,7 @@
     <div class="row q-gutter-md">
       <div class="col-12 col-md-3">
         <q-select v-model="test.type"
+                  :disable="!test.belongsToCurrentUser"
                   :options="types"
                   :rules="[ val => !!val > 0 || 'Please select something']"
                   emit-value
@@ -141,6 +153,7 @@
       </div>
       <div class="col-12 col-md-3">
         <q-select v-model="test.approach"
+                  :disable="!test.belongsToCurrentUser"
                   :options="approaches"
                   :rules="[ val => !!val > 0 || 'Please select something']"
                   emit-value
@@ -154,6 +167,7 @@
       </div>
       <div class="col-12 col-md-3">
         <q-select v-model="test.aggression"
+                  :disable="!test.belongsToCurrentUser"
                   :options="aggression"
                   :rules="[ val => !!val > 0 || 'Please select something']"
                   emit-value
@@ -169,6 +183,7 @@
     <div class="row q-gutter-md">
       <div class="col-12 col-md-12">
         <q-input v-model="test.generalObservation"
+                 :disable="!test.belongsToCurrentUser"
                  label="General Observation"
                  outlined
                  stack-label

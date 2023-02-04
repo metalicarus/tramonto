@@ -4,7 +4,9 @@
       <div class="col-12 q-pa-sm rounded-borders">
         <q-list bordered
                 padding>
-          <q-expansion-item expand-separator label="Selectable Users">
+          <q-expansion-item :disable="!belongsToCurrentUser"
+                            expand-separator label="Selectable Users"
+          >
             <q-item v-for="(item, index) in copySelectables"
                     :key="index"
                     v-ripple
@@ -19,7 +21,10 @@
               <q-item-section>
                 <q-item-label>Name: {{ `${item.firstName} ${item.lastName}` }}</q-item-label>
                 <q-item-label caption>
-                  | E-mail: {{ item.email }} | Roles: {{ item.roles.map(x => x.role).join(',') }}
+                  | E-mail: {{ item.email }} | Roles: {{
+                    item.roles.map(x => x.role)
+                      .join(',')
+                  }}
                 </q-item-label>
               </q-item-section>
             </q-item>
@@ -35,6 +40,10 @@ import { onMounted, PropType, ref } from 'vue';
 import { UserDto } from 'stores/dtos/UserDto';
 
 const props = defineProps({
+  belongsToCurrentUser: {
+    type: Boolean,
+    required: true,
+  },
   selectableUsers: {
     type: Array as PropType<Array<UserDto>>,
     required: true,

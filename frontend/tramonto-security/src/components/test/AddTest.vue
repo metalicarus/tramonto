@@ -45,6 +45,7 @@
             :title="steps.step2.title"
           >
             <check-step v-if="$checklistStore.checklists.length > 0"
+                        :belongs-to-current-user="test.belongsToCurrentUser"
                         :checklists="$checklistStore.checklists"
                         :types="['REQUIRED', 'RELATED', 'CUSTOMIZED']"
                         @update="test.checklists = $event"
@@ -61,6 +62,7 @@
           >
             <prepare-step v-if="$strategyStore.strategies.length > 0"
                           :strategies="$strategyStore.strategies"
+                          :belongs-to-current-user="test.belongsToCurrentUser"
                           @update-strategies="test.strategies = $event"
                           @update-tools="test.tools = $event"
             />
@@ -72,8 +74,10 @@
             :icon="steps.step4.icon"
             :name="steps.step4.name"
             :title="steps.step4.title"
+            :disable="!test.belongsToCurrentUser"
           >
             <share-step v-if="$authStore.selectableUsers.length > 0"
+                        :belongs-to-current-user="test.belongsToCurrentUser"
                         :selectable-users="$authStore.selectableUsers"
                         :selected-users="[]"
                         @update-selected-users="test.testers = $event"
@@ -98,7 +102,8 @@
     </q-tab-panels>
     <div class="q-pa-md q-gutter-md">
       <div class="row q-gutter-md">
-        <q-btn color="primary" label="Submit" outline size="large" type="submit"/>
+        <q-btn :disable="!test.belongsToCurrentUser"
+               color="primary" label="Submit" outline size="large" type="submit"/>
         <q-btn color="red"
                label="Cancel"
                outline
@@ -206,22 +211,24 @@ const $router = useRouter();
 const currentRoute = ref($router.currentRoute.value.path);
 
 const validateStep = (newVal: never, oldVal: never) => {
-  form.value.validate()
-    .then((response: never) => {
-      if (oldVal === steps.value.step1.name) {
-        steps.value.step1.error = !response;
-        steps.value.step1.done = response;
-      }
-      if (oldVal === steps.value.step2.name) {
-        steps.value.step2.error = test.value.checklists.length === 0;
-        steps.value.step2.done = test.value.checklists.length > 0;
-      }
-      if (oldVal === steps.value.step3.name) {
-        steps.value.step3.error = test.value.strategies.length === 0;
-        steps.value.step3.done = test.value.strategies.length > 0;
-      }
-      if (oldVal === steps.value.step5.name) steps.value.step5.error = !response;
-    });
+  if (form.value !== null) {
+    form.value.validate()
+      .then((response: never) => {
+        if (oldVal === steps.value.step1.name) {
+          steps.value.step1.error = !response;
+          steps.value.step1.done = response;
+        }
+        if (oldVal === steps.value.step2.name) {
+          steps.value.step2.error = test.value.checklists.length === 0;
+          steps.value.step2.done = test.value.checklists.length > 0;
+        }
+        if (oldVal === steps.value.step3.name) {
+          steps.value.step3.error = test.value.strategies.length === 0;
+          steps.value.step3.done = test.value.strategies.length > 0;
+        }
+        if (oldVal === steps.value.step5.name) steps.value.step5.error = !response;
+      });
+  }
 };
 const submit = () => {
   if (props.uuid.length > 0) {
@@ -265,7 +272,7 @@ onMounted(async () => {
   } else {
     $testStore.$reset();
   }
-  $categoryStore.findAllCategoryVectors();
+  await $categoryStore.findAllCategoryVectors();
   $typeStore.findAllTypes();
   await $checklistStore.findAllChecklists();
   await $strategyStore.findAllStrategies();
@@ -274,6 +281,7 @@ onMounted(async () => {
   setTrueInStrategy();
   setTrueInTesters();
   setStep();
+  validateStep();
 });
 </script>
 

@@ -1,46 +1,76 @@
 <template>
-  <div v-for="(item, index) in model.vectors" :key="index" class=" q-gutter-md">
-    <q-expansion-item :label="item.title" :default-opened="test.vectors.length === 1">
-      <template v-slot:header>
-        <q-item-section>
-          <div class="row q-gutter-sm justify-end">
-            <div class="col-12 col-md-8">
-              {{ `${index + 1}º Vector: ${item.title}` }}
-            </div>
-          </div>
+  <q-btn class="q-ma-sm" color="green" flat label="Add Vector"/>
+  <q-list bordered class="rounded-borders">
 
-        </q-item-section>
-      </template>
-      <div class="row q-gutter-md">
-        <div class="col-12 col-md-2 q-gutter-sm">
-          <q-btn v-if="test.vectors.length > 1"
-                 size="small"
-                 icon="fa fa-remove"
-                 outline
-                 color="red"
-                 @click="test.removeVector(index)"
+    <q-item-label header>Vector List</q-item-label>
+    <q-separator spaced/>
+
+    <q-item v-for="(item,index) in test.vectors" :key="index">
+      <q-item-section avatar top>
+        <q-icon color="black" name="fa-solid fa-bug" size="34px"/>
+      </q-item-section>
+
+      <q-item-section class="col-2 gt-sm" top>
+        <q-item-label class="q-mt-sm">Unsaved</q-item-label>
+      </q-item-section>
+
+      <q-item-section top>
+        <q-item-label lines="1">
+          <span class="text-weight-medium">{{ item.title }}</span>
+          <span class="text-grey-8"> - GitHub repository</span>
+        </q-item-label>
+        <q-item-label caption lines="1"> {{ item.description }}</q-item-label>
+      </q-item-section>
+      <q-item-section side top>
+        <div class="text-grey-8 q-gutter-xs">
+          <q-btn class="gt-xs"
+                 dense
+                 flat
+                 icon="edit"
+                 round
+                 size="12px"
+                 @click="itemIndex = index; dialog = !dialog"
           />
-          <q-btn size="small"
-                 icon="fa fa-plus"
-                 outline
-                 color="green"
-                 @click="test.addVector()"
-          />
+          <q-btn class="gt-xs" dense flat icon="delete" round size="12px"/>
+          <q-btn class="gt-xs" dense flat icon="done" round size="12px"/>
+          <q-btn dense flat icon="more_vert" round size="12px"/>
         </div>
-      </div>
-      <div class="row q-gutter-md">
-        <div class="col-12">
-          <q-input v-model="storeTest.verdade"
+      </q-item-section>
+
+    </q-item>
+  </q-list>
+  <q-dialog
+    v-model="dialog"
+    :maximized="maximizedToggle"
+    persistent
+    transition-hide="slide-down"
+    transition-show="slide-up"
+  >
+    <q-card class="text-white" :style="!maximizedToggle ? 'width: 1400px' : ''">
+      <q-bar class="bg-primary">
+        <q-space/>
+        <q-btn dense
+               flat
+               icon="crop_square"
+               @click="maximizedToggle = !maximizedToggle"
+        >
+          <q-tooltip v-if="!maximizedToggle" class="bg-white text-primary">Maximize</q-tooltip>
+        </q-btn>
+        <q-btn v-close-popup dense flat icon="close">
+          <q-tooltip class="bg-white text-primary">Close</q-tooltip>
+        </q-btn>
+      </q-bar>
+      <div class="q-pa-md">
+        <div class="col-12 col-md-12">
+          <q-input v-model="test.vectors[itemIndex].title"
                    label="Title"
                    stack-label
                    outlined
-                   :rules="[ val => !!val > 0 || 'Please select something']"
+                   :rules="[ val => !! val > 0 || 'Please select something']"
           />
         </div>
-      </div>
-      <div class="row q-gutter-md">
         <div class="col-12 col-md-12">
-          <q-input v-model="item.description"
+          <q-input v-model="test.vectors[itemIndex].description"
                    label="Description"
                    type="textarea"
                    stack-label
@@ -48,10 +78,8 @@
                    :rules="[ val => !!val > 0 || 'Please select something']"
           />
         </div>
-      </div>
-      <div class="row q-gutter-md">
         <div class="col-12 col-md-12">
-          <q-input v-model="item.expectedResults"
+          <q-input v-model="test.vectors[itemIndex].expectedResults"
                    label="Expected results"
                    type="textarea"
                    stack-label
@@ -59,10 +87,8 @@
                    :rules="[ val => !!val > 0 || 'Please select something']"
           />
         </div>
-      </div>
-      <div class="row q-gutter-md">
         <div class="col-12 col-md-12">
-          <q-input v-model="item.resultsObtained"
+          <q-input v-model="test.vectors[itemIndex].resultsObtained"
                    label="Results obtained"
                    type="textarea"
                    stack-label
@@ -70,28 +96,24 @@
                    :rules="[ val => !!val > 0 || 'Please select something']"
           />
         </div>
-      </div>
-      <div class="row q-gutter-md">
         <div class="col-12 col-md-5">
           <q-badge color="red">
-            Reproducibility Rate: {{ item.reproducibility }} %
+            Reproducibility Rate: {{ test.vectors[itemIndex].reproducibility }} %
           </q-badge>
-          <q-slider v-model="item.reproducibility"
+          <q-slider v-model="test.vectors[itemIndex].reproducibility"
                     color="red"
           />
         </div>
         <div class="col-12 col-md-5">
           <q-badge color="blue">
-            Impact Rate: {{ item.impact }} %
+            Impact Rate: {{ test.vectors[itemIndex].impact }} %
           </q-badge>
-          <q-slider v-model="item.impact"
+          <q-slider v-model="test.vectors[itemIndex].impact"
                     color="blue"
           />
         </div>
-      </div>
-      <div class="row q-gutter-md">
-        <div class="col-12 col-md-3">
-          <q-select v-model="item.vectorCategory.id"
+        <div class="col-12 col-md-12">
+          <q-select v-model="test.vectors[itemIndex].vectorCategory.id"
                     :options="vectors"
                     option-label="vectorCategory"
                     option-value="id"
@@ -104,14 +126,16 @@
           />
         </div>
       </div>
-    </q-expansion-item>
-  </div>
+    </q-card>
+  </q-dialog>
 </template>
-<script setup lang="ts">
+<script lang="ts" setup>
 import VectorCategoryDto from 'src/services/dtos/VectorCategory.dto';
-import { PropType, toRef } from 'vue';
-import Test from 'components/test/Test';
+import {
+  onMounted, PropType, ref, Ref, toRef,
+} from 'vue';
 import { useTestStore } from 'stores/test.store';
+import TestDto from 'src/services/dtos/Test.dto';
 
 const props = defineProps({
   vectors: {
@@ -119,14 +143,18 @@ const props = defineProps({
     required: true,
   },
   model: {
-    type: Object as PropType<typeof Test>,
+    type: Object as PropType<TestDto>,
     required: true,
   },
 });
-const storeTest = useTestStore().test;
-
-const test = toRef(props, 'model');
-
+const $testStore = useTestStore();
+const test: Ref<TestDto> = toRef(props, 'model');
+const dialog = ref<boolean>(false);
+const maximizedToggle = ref<boolean>(true);
+const itemIndex = ref<number>(0);
+onMounted(() => {
+  $testStore.addVector();
+});
 </script>
 <style scoped>
 

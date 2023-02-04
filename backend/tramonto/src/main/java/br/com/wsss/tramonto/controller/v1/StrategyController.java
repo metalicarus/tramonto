@@ -44,14 +44,14 @@ public class StrategyController {
 		return ResponseEntity.ok(service.findById(strategyId));
 	}
     
-    @PreAuthorize("hasAnyAuthority('TESTER_ADVANCED')")
+	@PreAuthorize("hasAnyAuthority('TESTER_BASIC', 'TESTER_INTERMEDIARY', 'TESTER_ADVANCED')")
 	@GetMapping("/findAll")
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<Set<StrategyDto>> findAll() {
 		return ResponseEntity.ok(service.findAll());
 	}
 	
-    @PreAuthorize("hasAnyAuthority('TESTER_ADVANCED')")
+	@PreAuthorize("hasAnyAuthority('TESTER_BASIC', 'TESTER_INTERMEDIARY', 'TESTER_ADVANCED')")
 	@GetMapping
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<PageResponse<StrategyDto>> paginate(@RequestParam("filter") String filter, @RequestParam("page") Integer page,

@@ -28,5 +28,6 @@ public interface TestMapper {
 	@Mapping(source = "checklists", ignore = true, target = "checklists")
 	@Mapping(source = "strategies", ignore = true, target = "strategies")
 	@Mapping(source = "testers", ignore = true, target = "testers")
+	@Mapping(source = "vectors", ignore = true, target = "vectors")
 	TestDto toPage(Test entity);
 }

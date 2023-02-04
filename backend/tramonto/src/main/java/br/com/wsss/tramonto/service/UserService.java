@@ -24,4 +24,8 @@ public class UserService {
 			return mapper.entityToUserDto(x);
 		}).toList();
 	}
+	
+	public User getCurrentUser() {
+		return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+	}
 }

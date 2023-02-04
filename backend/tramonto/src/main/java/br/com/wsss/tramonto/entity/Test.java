@@ -18,6 +18,7 @@ import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import br.com.wsss.tramonto.domain.type.TestAggression;
 import br.com.wsss.tramonto.domain.type.TestApproach;
@@ -87,12 +88,18 @@ public class Test extends BaseEntity {
 
 	@OneToMany(mappedBy = "test", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private Set<TestObjective> objectives = new HashSet<>();
+	
+	@OneToMany(mappedBy = "test", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private Set<TestVector> vectors = new HashSet<>();
 
 	@OneToMany(mappedBy = "pk.test", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private Set<TestStrategy> strategies = new HashSet<>();
 	
 	@OneToMany(mappedBy = "pk.test", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private Set<TestTester> testers = new HashSet<>();
+	
+	@Transient
+	private boolean belongsToCurrentUser;
 
 	public void addObjectives(Set<TestObjective> objs) {
 		this.objectives.clear();
@@ -105,6 +112,7 @@ public class Test extends BaseEntity {
 		this.setTestInPkChecklist();
 		this.setTestInObjectives();
 		this.setTestInPkStrategies();
+		this.setTestInVectors();
 	}
 
 	@PreUpdate
@@ -113,8 +121,15 @@ public class Test extends BaseEntity {
 		this.setTestInObjectives();
 		this.setTestInPkStrategies();
 		this.setTestInPkTesters();
+		this.setTestInVectors();
 	}
 
+	private void setTestInVectors() {
+		vectors.forEach(x -> {
+			x.setTest(this);
+		});
+	}
+	
 	private void setTestInPkTesters() {
 		testers.forEach(x -> {
 			x.getPk().setTest(this);

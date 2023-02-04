@@ -37,8 +37,10 @@ public class TestDto extends BaseDto {
 	private TestTypeDto type;
 	private Set<ChecklistDto> checklists = new HashSet<>();
 	private Set<TestObjectiveDto> objectives = new HashSet<>();
+	private Set<TestVectorDto> vectors = new HashSet<>();
 	private Set<StrategyDto> strategies = new HashSet<>();
 	private Set<UserDto> testers = new HashSet<>();
+	private boolean belongsToCurrentUser;
 
 	
 	@Getter

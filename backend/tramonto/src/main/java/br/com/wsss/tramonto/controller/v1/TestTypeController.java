@@ -41,7 +41,7 @@ public class TestTypeController {
 		return ResponseEntity.ok(service.findById(testTypeId));
 	}
     
-    @PreAuthorize("hasAnyAuthority('TESTER_ADVANCED')")
+	@PreAuthorize("hasAnyAuthority('TESTER_BASIC', 'TESTER_INTERMEDIARY', 'TESTER_ADVANCED')")
 	@GetMapping
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<Set<TestTypeDto>> findAll() {

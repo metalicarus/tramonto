@@ -10,7 +10,8 @@
       </q-breadcrumbs>
     </div>
     <div class="q-pa-sm">
-      <q-btn :icon-right="icon"
+      <q-btn :disable="!acceptedRoles"
+             :icon-right="icon"
              color="primary"
              label="New"
              outline
@@ -19,29 +20,38 @@
       </q-btn>
     </div>
     <q-card bordered class="q-pa-lg" flat>
-      <paginate-test :edit-route="editRoute" :label="label" :share-route="shareRoute"/>
+      <paginate-test :execution-route="executionRoute"
+                     :edit-route="editRoute"
+                     :label="label"
+                     :share-route="shareRoute"
+      />
     </q-card>
   </q-page>
 </template>
 
 <script>
 import {
-  ANCHOR_PAGE, TESTS_ICON, TESTS_PAGINATE, TESTS_SAVE, TESTS_SHARE,
+  ANCHOR_PAGE, TESTS_EXECUTION, TESTS_ICON, TESTS_PAGINATE, TESTS_SAVE, TESTS_SHARE,
 } from '../../consts/RoutesConsts';
 import { TESTS } from '../../consts/LabelsConsts';
 import PaginateTest from '../../components/test/PaginateTest.vue';
+import { useAuthenticationStore } from '../../stores/authentication.store';
+import { RoutesRolesConsts } from '../../consts/RoutesRolesConsts';
 
 export default {
   name: 'IndexPage',
   components: { PaginateTest },
   setup() {
+    const $authStore = useAuthenticationStore();
     return {
       icon: TESTS_ICON,
       label: TESTS,
+      acceptedRoles: $authStore.userRolesContain(RoutesRolesConsts[TESTS_SAVE]),
       mainRoute: TESTS_PAGINATE,
       anchorRoute: ANCHOR_PAGE,
       editRoute: TESTS_SAVE,
       shareRoute: TESTS_SHARE,
+      executionRoute: TESTS_EXECUTION,
     };
   },
 };

@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.wsss.tramonto.dto.input.TestDto;
+import br.com.wsss.tramonto.dto.input.TestVectorDto;
 import br.com.wsss.tramonto.dto.output.PageResponse;
 import br.com.wsss.tramonto.service.contract.TestService;
 
@@ -56,5 +57,12 @@ public class TestController {
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<TestDto> find(@PathVariable UUID testId) {
 		return ResponseEntity.ok(service.findById(testId));
+	}
+	
+	@PreAuthorize("hasAnyAuthority('TESTER_BASIC', 'TESTER_INTERMEDIARY', 'TESTER_ADVANCED')")
+	@PostMapping("/addVector")
+	@ResponseStatus(HttpStatus.OK)
+	public ResponseEntity<TestVectorDto> addVector(@RequestParam("testId") UUID testId, @RequestBody TestVectorDto dto) {
+		return ResponseEntity.ok(service.addTestVector(testId, dto));
 	}
 }

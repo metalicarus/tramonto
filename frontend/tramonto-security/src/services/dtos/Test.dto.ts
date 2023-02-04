@@ -18,6 +18,7 @@ export default interface TestDto {
   approach: string;
   aggression: string;
   generalObservation: string;
+  belongsToCurrentUser: boolean;
   checklists: Array<Checklist>;
   strategies: Array<StrategyDto>;
   tools: Array<ToolDto>;

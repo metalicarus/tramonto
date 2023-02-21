@@ -16,6 +16,7 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
+import br.com.wsss.tramonto.domain.type.Approval;
 import br.com.wsss.tramonto.domain.type.Status;
 import br.com.wsss.tramonto.dto.input.TestDto;
 import br.com.wsss.tramonto.dto.input.TestVectorDto;
@@ -108,7 +109,7 @@ public class TestServiceImpl<C> implements TestService {
 			return mapper.toPage(x);
 		}).collect(Collectors.toList()), request, pages.getTotalElements(), pages.getNumber());
 	}
-
+ 
 	@Override
 	public void active(UUID id, Status status) {
 		// TODO Auto-generated method stub
@@ -127,9 +128,16 @@ public class TestServiceImpl<C> implements TestService {
 	@Override
 	public TestVectorDto addTestVector(UUID testId, TestVectorDto dto) {
 		Test t = repository.findById(testId).orElseThrow(() -> new EntityNotFoundException("Not found Test with Identification: " + testId));
+		User user = userService.getCurrentUser();
 		TestVector entity = vectorMapper.dtoToEntity(dto);
-		entity.setOwner(userService.getCurrentUser());
+		entity.setOwner(user);
 		entity.setTest(t);
-		return vectorMapper.entityToDto(vectorRepository.save(entity));
+		if (repository.isTestOwner(testId, user.getId())) {
+			entity.setApproval(Approval.APPROVED);
+		} else {
+			entity.setApproval(Approval.EDIT);
+		}
+		vectorRepository.save(entity);
+		return vectorMapper.entityToDto(entity);
 	}
 }

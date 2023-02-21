@@ -1,11 +1,17 @@
 import { AxiosResponse } from 'axios';
 import { api } from 'boot/axios';
 import TestDto from 'src/services/dtos/Test.dto';
+import { TestVector } from 'components/test/Test';
 
 class TestService {
   // eslint-disable-next-line class-methods-use-this
   findById(uuid: string): Promise<AxiosResponse<TestDto>> {
     return api.get(`/v1/test/${uuid}`);
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  addVector(testId: string, vector: TestVector): Promise<AxiosResponse<TestVector>> {
+    return api.post(`/v1/test/addVector?testId=${testId}`, vector);
   }
 
   // eslint-disable-next-line class-methods-use-this

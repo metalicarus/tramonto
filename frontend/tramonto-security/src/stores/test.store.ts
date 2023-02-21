@@ -115,6 +115,28 @@ export const useTestStore = defineStore('tests', {
           Loading.hide();
         });
     },
+    persistVector(index: number) {
+      Loading.show();
+      TestService.addVector(this.test.id, this.test.vectors[index])
+        .then((response) => {
+          if (response.status === 201 || response.status === 200) {
+            this.test.vectors[index] = response.data;
+            Notify.create({
+              message: 'Vector added successfully!',
+              type: 'positive',
+            });
+          }
+        })
+        .catch(() => {
+          Notify.create({
+            message: 'The server couldn\'t process your request',
+            type: 'negative',
+          });
+        })
+        .finally(() => {
+          Loading.hide();
+        });
+    },
     addVector() {
       this.test.vectors.push(new TestVector());
     },

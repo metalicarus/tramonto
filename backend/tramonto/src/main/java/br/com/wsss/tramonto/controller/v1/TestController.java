@@ -17,9 +17,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.annotation.JsonView;
+
 import br.com.wsss.tramonto.dto.input.TestDto;
 import br.com.wsss.tramonto.dto.input.TestVectorDto;
 import br.com.wsss.tramonto.dto.output.PageResponse;
+import br.com.wsss.tramonto.dto.output.View;
 import br.com.wsss.tramonto.service.contract.TestService;
 
 @RestController
@@ -44,12 +47,14 @@ public class TestController {
 	}
 
 	@PreAuthorize("hasAnyAuthority('TESTER_BASIC', 'TESTER_INTERMEDIARY', 'TESTER_ADVANCED')")
+	@JsonView(View.Pagination.class)
 	@GetMapping
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<PageResponse<TestDto>> paginate(@RequestParam("filter") String filter,
 			@RequestParam("page") Integer page, @RequestParam("perPage") Integer perPage,
 			@RequestParam("sortBy") String sortBy, @RequestParam("direction") String direction) {
-		return ResponseEntity.ok(service.paginate(filter, page, perPage, sortBy, Direction.fromString(direction)));
+		PageResponse<TestDto> resp = service.paginate(filter, page, perPage, sortBy, Direction.fromString(direction));
+		return ResponseEntity.ok(resp);
 	}
 
 	@PreAuthorize("hasAnyAuthority('TESTER_BASIC', 'TESTER_INTERMEDIARY', 'TESTER_ADVANCED')")
@@ -59,10 +64,11 @@ public class TestController {
 		return ResponseEntity.ok(service.findById(testId));
 	}
 	
-	@PreAuthorize("hasAnyAuthority('TESTER_BASIC', 'TESTER_INTERMEDIARY', 'TESTER_ADVANCED')")
+	@PreAuthorize("hasAnyAuthority('TESTER_BASIC', 'TESTER_INTERMEDIARY', 'TESTER_ADVANCED')")	
 	@PostMapping("/addVector")
 	@ResponseStatus(HttpStatus.OK)
-	public ResponseEntity<TestVectorDto> addVector(@RequestParam("testId") UUID testId, @RequestBody TestVectorDto dto) {
+	public ResponseEntity<TestVectorDto> addVector(@RequestParam("testId") UUID testId, @JsonView(View.Crud.class) @RequestBody TestVectorDto dto
+			) {
 		return ResponseEntity.ok(service.addTestVector(testId, dto));
 	}
 }

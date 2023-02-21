@@ -1,23 +1,29 @@
 <template>
-  <q-btn class="q-ma-sm" color="green" flat label="Add Vector"/>
+  <q-btn class="q-ma-sm" color="green" flat label="Add Vector" @click="$testStore.addVector()"/>
   <q-list bordered class="rounded-borders">
 
     <q-item-label header>Vector List</q-item-label>
     <q-separator spaced/>
 
+    <q-item v-if="test.vectors.length === 0">
+      No registered vectors
+    </q-item>
     <q-item v-for="(item,index) in test.vectors" :key="index">
       <q-item-section avatar top>
-        <q-icon color="black" name="fa-solid fa-bug" size="34px"/>
+        <q-icon :color="item.id.length === 0 ? 'black' : 'green'"
+                name="fa-solid fa-microscope"
+                size="24px"
+        />
       </q-item-section>
 
       <q-item-section class="col-2 gt-sm" top>
-        <q-item-label class="q-mt-sm">Unsaved</q-item-label>
+        <q-item-label v-if="item.id.length === 0" class="q-mt-sm">Unsaved</q-item-label>
+        <q-item-label v-if="item.id.length > 0" class="q-mt-sm">Saved</q-item-label>
       </q-item-section>
 
       <q-item-section top>
         <q-item-label lines="1">
           <span class="text-weight-medium">{{ item.title }}</span>
-          <span class="text-grey-8"> - GitHub repository</span>
         </q-item-label>
         <q-item-label caption lines="1"> {{ item.description }}</q-item-label>
       </q-item-section>
@@ -31,9 +37,15 @@
                  size="12px"
                  @click="itemIndex = index; dialog = !dialog"
           />
+          <q-btn class="gt-xs"
+                 icon="done"
+                 size="12px"
+                 dense
+                 flat
+                 round
+                 @click="$testStore.persistVector(itemIndex)"
+          />
           <q-btn class="gt-xs" dense flat icon="delete" round size="12px"/>
-          <q-btn class="gt-xs" dense flat icon="done" round size="12px"/>
-          <q-btn dense flat icon="more_vert" round size="12px"/>
         </div>
       </q-item-section>
 
@@ -113,7 +125,7 @@
           />
         </div>
         <div class="col-12 col-md-12">
-          <q-select v-model="test.vectors[itemIndex].vectorCategory.id"
+          <q-select v-model="test.vectors[itemIndex].category.id"
                     :options="vectors"
                     option-label="vectorCategory"
                     option-value="id"
@@ -132,7 +144,7 @@
 <script lang="ts" setup>
 import VectorCategoryDto from 'src/services/dtos/VectorCategory.dto';
 import {
-  onMounted, PropType, ref, Ref, toRef,
+  PropType, ref, Ref, toRef,
 } from 'vue';
 import { useTestStore } from 'stores/test.store';
 import TestDto from 'src/services/dtos/Test.dto';
@@ -152,9 +164,6 @@ const test: Ref<TestDto> = toRef(props, 'model');
 const dialog = ref<boolean>(false);
 const maximizedToggle = ref<boolean>(true);
 const itemIndex = ref<number>(0);
-onMounted(() => {
-  $testStore.addVector();
-});
 </script>
 <style scoped>
 

@@ -28,13 +28,17 @@ export class TestVector implements BaseDto {
 
   resultsObtained = '';
 
-  vectorCategory = new VectorCateogry();
+  category = new VectorCateogry();
 
   reproducibility = 0;
 
   impact = 0;
 
   testId = '';
+
+  approval = '';
+
+  observationApproval = '';
 
   createdAt = '';
 

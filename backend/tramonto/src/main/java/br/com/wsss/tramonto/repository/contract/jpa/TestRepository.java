@@ -18,15 +18,15 @@ public interface TestRepository extends JpaRepository<Test, UUID> {
 
 	Page<Test> findByTitleContaining(String title, Pageable pageable);
 
-//	@Query(value= "SELECT t FROM Test t WHERE t.id IN ("
-//			+ " SELECT tt.id FROM Test tt WHERE tt.owner = :currentUserId) OR ("
-//			+ " SELECT ttt.id FROM TestTester ttt WHERE ttt.testerId = :currentUserId)"
-//			+ " AND t.title LIKE %:filter%")
+	@Query("SELECT CASE WHEN COUNT(t) > 0 THEN true ELSE false END FROM Test t WHERE t.id = :testId AND t.owner.id = :userId")
+	boolean isTestOwner(@Param("testId") UUID testId, @Param("userId") UUID userId);
+
 	@Query(nativeQuery = true, value = "SELECT 	t.*  FROM tests t"
 			+ "	WHERE (t.id IN (SELECT t2.id FROM tests t2 WHERE t2.owner = :currentUserId))"
 			+ " OR (t.id IN (SELECT t3.test_id FROM test_tester t3 WHERE t3.tester_id = :currentUserId))"
 			+ " AND t.title LIKE %:title%")
-	Page<Test> findByUser(@Param("currentUserId") String currentUserId, @Param("title") String title, Pageable pageRequest);
+	Page<Test> findByUser(@Param("currentUserId") String currentUserId, @Param("title") String title,
+			Pageable pageRequest);
 
 	@Modifying
 	@Query(value = "DELETE FROM TestStrategy ts WHERE ts.pk.test.id = :testId")

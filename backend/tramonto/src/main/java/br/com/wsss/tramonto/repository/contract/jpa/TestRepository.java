@@ -21,12 +21,21 @@ public interface TestRepository extends JpaRepository<Test, UUID> {
 	@Query("SELECT CASE WHEN COUNT(t) > 0 THEN true ELSE false END FROM Test t WHERE t.id = :testId AND t.owner.id = :userId")
 	boolean isTestOwner(@Param("testId") UUID testId, @Param("userId") UUID userId);
 
-	@Query(nativeQuery = true, value = "SELECT 	t.*  FROM tests t"
-			+ "	WHERE (t.id IN (SELECT t2.id FROM tests t2 WHERE t2.owner = :currentUserId))"
-			+ " OR (t.id IN (SELECT t3.test_id FROM test_tester t3 WHERE t3.tester_id = :currentUserId))"
-			+ " AND t.title LIKE %:title%")
-	Page<Test> findByUser(@Param("currentUserId") String currentUserId, @Param("title") String title,
-			Pageable pageRequest);
+	@Query("SELECT CASE WHEN COUNT(tv) > 0 THEN true ELSE false END FROM TestVector tv WHERE tv.test.owner.id = :userId AND tv.id = :vectorId")
+	boolean istTestOwnerByVectorId(@Param("vectorId") UUID vectorId, @Param("userId") UUID userId);
+
+	@Query(nativeQuery = true, value = "SELECT t.* FROM tests t " 
+	        + "JOIN users u ON t.owner = u.id "
+	        + "LEFT JOIN test_tester tt ON t.id = tt.test_id "
+	        + "WHERE ((u.id = :currentUserId) OR (tt.tester_id = :currentUserId)) "
+	        + "AND (t.title LIKE %:title%)"
+	        + "ORDER BY t.title, t.updated_at",
+	        countQuery = "SELECT COUNT(*) FROM tests t " 
+	        + "JOIN users u ON t.owner = u.id "
+	        + "LEFT JOIN test_tester tt ON t.id = tt.test_id "
+	        + "WHERE ((u.id = :currentUserId) OR (tt.tester_id = :currentUserId)) "
+	        + "AND (t.title LIKE %:title%)")
+	Page<Test> findByUser(@Param("currentUserId") String currentUserId, @Param("title") String title, Pageable pageRequest);
 
 	@Modifying
 	@Query(value = "DELETE FROM TestStrategy ts WHERE ts.pk.test.id = :testId")

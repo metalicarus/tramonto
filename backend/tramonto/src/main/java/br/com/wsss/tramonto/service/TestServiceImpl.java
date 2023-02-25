@@ -24,6 +24,7 @@ import br.com.wsss.tramonto.dto.output.PageResponse;
 import br.com.wsss.tramonto.entity.Test;
 import br.com.wsss.tramonto.entity.TestVector;
 import br.com.wsss.tramonto.entity.User;
+import br.com.wsss.tramonto.exception.TramontoException;
 import br.com.wsss.tramonto.mapper.contract.TestMapper;
 import br.com.wsss.tramonto.mapper.contract.TestVectorMapper;
 import br.com.wsss.tramonto.repository.contract.jpa.TestChecklistRepository;
@@ -57,7 +58,13 @@ public class TestServiceImpl<C> implements TestService {
 
 	@Override
 	public TestDto findById(UUID id) {
-		return mapper.testToTestDto(repository.findById(id).get());
+		User currentUSer = userService.getCurrentUser();
+		Test entity = repository.findById(id).orElseThrow(() -> new EntityNotFoundException("Not found Test with Identification: " + id));
+		entity.setBelongsToCurrentUser(entity.getOwner().getId().equals(currentUSer.getId()));
+		entity.getVectors().forEach(vector -> {
+			vector.setBelongsToCurrentUser(vector.getOwner().getId().equals(currentUSer.getId()));
+		});
+		return mapper.testToTestDto(entity);		
 	}
 
 	@Transactional
@@ -102,7 +109,7 @@ public class TestServiceImpl<C> implements TestService {
 	public PageResponse<TestDto> paginate(String filter, Integer page, Integer perPage, String sortBy,
 			Direction direction) {
 		User currentUser = userService.getCurrentUser();
-		Pageable request = PageRequest.of(page, perPage, Sort.by(direction, sortBy));
+		Pageable request = PageRequest.of(page, perPage, Sort.by(direction, sortBy));		
 		Page<Test> pages = repository.findByUser(currentUser.getId().toString(), filter, request);
 		return new PageResponse<TestDto>(pages.getContent().stream().map(x -> {
 			x.setBelongsToCurrentUser(x.getOwner().getId().equals(currentUser.getId()));
@@ -132,12 +139,23 @@ public class TestServiceImpl<C> implements TestService {
 		TestVector entity = vectorMapper.dtoToEntity(dto);
 		entity.setOwner(user);
 		entity.setTest(t);
+		entity.setBelongsToCurrentUser(true);		
 		if (repository.isTestOwner(testId, user.getId())) {
 			entity.setApproval(Approval.APPROVED);
 		} else {
 			entity.setApproval(Approval.EDIT);
 		}
-		vectorRepository.save(entity);
-		return vectorMapper.entityToDto(entity);
+		return vectorMapper.entityToDto(vectorRepository.save(entity));
+	}
+	
+	@Override
+	public void changeVectorStatus(UUID testVectorId, Approval approval) {
+		if (repository.istTestOwnerByVectorId(testVectorId, userService.getCurrentUser().getId())) {
+			TestVector entity = vectorRepository.findById(testVectorId).orElseThrow(() -> new EntityNotFoundException("Not found Vector with Identification: " + testVectorId));
+			entity.setApproval(approval);
+			vectorRepository.save(entity);
+		} else {
+			throw new TramontoException("You are not the owner of the test");
+		}		
 	}
 }

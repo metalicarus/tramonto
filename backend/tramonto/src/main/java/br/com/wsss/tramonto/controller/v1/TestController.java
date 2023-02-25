@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.annotation.JsonView;
 
+import br.com.wsss.tramonto.domain.type.Approval;
 import br.com.wsss.tramonto.dto.input.TestDto;
 import br.com.wsss.tramonto.dto.input.TestVectorDto;
 import br.com.wsss.tramonto.dto.output.PageResponse;
@@ -70,5 +72,14 @@ public class TestController {
 	public ResponseEntity<TestVectorDto> addVector(@RequestParam("testId") UUID testId, @JsonView(View.Crud.class) @RequestBody TestVectorDto dto
 			) {
 		return ResponseEntity.ok(service.addTestVector(testId, dto));
+	}
+	
+	@SuppressWarnings("rawtypes")
+	@PreAuthorize("hasAnyAuthority('TESTER_INTERMEDIARY', 'TESTER_ADVANCED')")
+	@PatchMapping("/changeVectorStatus")
+	@ResponseStatus(HttpStatus.OK)
+	public ResponseEntity changeVectorStatus(@RequestParam("vectorId") UUID vectorId, @RequestParam("approval") Approval approval) {
+		service.changeVectorStatus(vectorId, approval);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 }

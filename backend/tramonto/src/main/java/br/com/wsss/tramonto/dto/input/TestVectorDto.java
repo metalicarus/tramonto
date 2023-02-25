@@ -1,6 +1,5 @@
 package br.com.wsss.tramonto.dto.input;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import br.com.wsss.tramonto.dto.output.View;
@@ -38,4 +37,6 @@ public class TestVectorDto extends BaseDto {
 	@JsonView(View.Crud.class)
 	private Integer impact;
 	
+	@JsonView(View.Default.class)
+	private boolean belongsToCurrentUser;	
 }

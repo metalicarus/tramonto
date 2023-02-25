@@ -9,8 +9,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import br.com.wsss.tramonto.domain.type.Approval;
+import br.com.wsss.tramonto.entity.contract.PrivilegeAwareAbstract;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,7 +20,7 @@ import lombok.Setter;
 @Table(name = "TEST_VECTORS")
 @Getter
 @Setter
-public class TestVector extends BaseEntity {
+public class TestVector extends PrivilegeAwareAbstract {
 
 	/**
 	 * 
@@ -40,7 +42,7 @@ public class TestVector extends BaseEntity {
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "OWNER", referencedColumnName = "ID", nullable = false)
 	private User owner;
-
+	
 	private String title;
 	private String description;
 	private String expectedResults;
@@ -48,6 +50,9 @@ public class TestVector extends BaseEntity {
 	private String observationApproval;
 	private Integer reproducibility;
 	private Integer impact;
+	
+	@Transient
+	private boolean belongsToCurrentUser;
 	
 	@Override
 	public boolean equals(Object o) {

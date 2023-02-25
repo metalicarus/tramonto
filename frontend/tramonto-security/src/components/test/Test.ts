@@ -40,6 +40,8 @@ export class TestVector implements BaseDto {
 
   observationApproval = '';
 
+  belongsToCurrentUser = false;
+
   createdAt = '';
 
   updatedAt = '';

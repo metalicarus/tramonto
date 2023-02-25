@@ -25,100 +25,98 @@ export const useTestStore = defineStore('tests', {
       direction: '',
     }),
   }),
+  getters: {
+    isValidVector: (state) => (index: number) => state.test.vectors[index].title.length > 0
+      && state.test.vectors[index].description.length > 0
+      && state.test.vectors[index].expectedResults.length > 0
+      && state.test.vectors[index].resultsObtained.length > 0,
+  },
   actions: {
-    paginate() {
-      const $paginationStore = usePaginationStore();
+    async paginate() {
+      const paginationStore = usePaginationStore();
       Loading.show();
-      $paginationStore.setPageDisable(true);
-      $paginationStore.setFilterDisable(true);
-      TestService.paginate($paginationStore.filter, $paginationStore.page - 1, this.pagination.perPage, 'created_at', 'DESC')
-        .then((response) => {
-          this.rows = response.data.content;
-          this.pagination.totalItems = response.data.totalItems - response.data.content.length;
-          this.pagination.totalPages = Math.ceil(response.data.totalItems
-            / this.pagination.perPage);
-          $paginationStore.setPageDisable(false);
-          $paginationStore.setFilterDisable(false);
-        })
-        .catch(() => {
-          Notify.create({
-            message: 'The server couldn\'t process your request',
-            type: 'negative',
-          });
-        })
-        .finally(() => {
-          Loading.hide();
+      paginationStore.setPageDisable(true);
+      paginationStore.setFilterDisable(true);
+      try {
+        const response = await TestService.paginate(paginationStore.filter, paginationStore.page - 1, this.pagination.perPage, 'created_at', 'DESC');
+        this.rows = response.data.content;
+        this.pagination.totalItems = response.data.totalItems - response.data.content.length;
+        this.pagination.totalPages = Math.ceil(response.data.totalItems / this.pagination.perPage);
+        paginationStore.setPageDisable(false);
+        paginationStore.setFilterDisable(false);
+      } catch {
+        Notify.create({
+          message: "The server couldn't process your request",
+          type: 'negative',
         });
+      } finally {
+        Loading.hide();
+      }
     },
     async findById(uuid: string) {
       Loading.show();
-      await TestService.findById(uuid)
-        .then((response) => {
-          this.test = response.data;
-        })
-        .catch(() => {
-          Notify.create({
-            message: 'The server couldn\'t process your request',
-            type: 'negative',
-          });
-        })
-        .finally(() => {
-          Loading.hide();
+      try {
+        const response = await TestService.findById(uuid);
+        this.test = response.data;
+      } catch {
+        Notify.create({
+          message: "The server couldn't process your request",
+          type: 'negative',
         });
+      } finally {
+        Loading.hide();
+      }
     },
-    update() {
+    async update() {
       Loading.show();
-      TestService.update(this.test)
-        .then((response) => {
-          if (response.status === 201 || response.status === 200) {
-            Notify.create({
-              message: 'Test updated successfully!',
-              type: 'positive',
-            });
-          }
-          this.router.push({
-            path: '/tests',
-          });
-        })
-        .catch(() => {
+      try {
+        const response = await TestService.update(this.test);
+        if (response.status === 201 || response.status === 200) {
           Notify.create({
-            message: 'The server couldn\'t process your request',
-            type: 'negative',
+            message: 'Test updated successfully!',
+            type: 'positive',
           });
-        })
-        .finally(() => {
-          Loading.hide();
+        }
+        this.router.push({
+          path: '/tests',
         });
+      } catch {
+        Notify.create({
+          message: "The server couldn't process your request",
+          type: 'negative',
+        });
+      } finally {
+        Loading.hide();
+      }
     },
     async save() {
       Loading.show();
-      TestService.save(this.test)
-        .then((response) => {
-          if (response.status === 201 || response.status === 200) {
-            Notify.create({
-              message: 'Test created successfully!',
-              type: 'positive',
-            });
-          }
-          this.router.push({
-            path: '/tests/save',
-            query: { uuid: response.data.id },
-          });
-        })
-        .catch(() => {
+      try {
+        const response = await TestService.save(this.test);
+        if (response.status === 201 || response.status === 200) {
           Notify.create({
-            message: 'The server couldn\'t process your request',
-            type: 'negative',
+            message: 'Test created successfully!',
+            type: 'positive',
           });
-        })
-        .finally(() => {
-          Loading.hide();
+        }
+        this.router.push({
+          path: '/tests/save',
+          query: { uuid: response.data.id },
         });
+      } catch {
+        Notify.create({
+          message: "The server couldn't process your request",
+          type: 'negative',
+        });
+      } finally {
+        Loading.hide();
+      }
     },
-    persistVector(index: number) {
+    async persistVector(index: number) {
       Loading.show();
-      TestService.addVector(this.test.id, this.test.vectors[index])
-        .then((response) => {
+      if (this.isValidVector(index)) {
+        try {
+          const response = await TestService.addVector(this.test.id, this.test.vectors[index]);
           if (response.status === 201 || response.status === 200) {
             this.test.vectors[index] = response.data;
             Notify.create({
@@ -126,19 +124,48 @@ export const useTestStore = defineStore('tests', {
               type: 'positive',
             });
           }
-        })
-        .catch(() => {
+        } catch {
           Notify.create({
             message: 'The server couldn\'t process your request',
             type: 'negative',
           });
-        })
-        .finally(() => {
+        } finally {
           Loading.hide();
+        }
+      } else {
+        Loading.hide();
+        Notify.create({
+          message: 'Please, insert informations in vector',
+          type: 'negative',
         });
+      }
+    },
+    async changeVectorStatus(vectorId: string, approval: string) {
+      try {
+        Loading.show();
+        if (!vectorId || !approval) {
+          throw new Error('Invalid input parameters');
+        }
+        const response = await TestService.changeVectorStatus(vectorId, approval);
+        if (response.status === 200 || response.status === 201) {
+          Notify.create({
+            message: 'Vector approval changed successfully',
+            type: 'positive',
+          });
+        }
+      } catch (error) {
+        Notify.create({
+          message: 'An error occurred while processing your request',
+          type: 'negative',
+        });
+      } finally {
+        Loading.hide();
+      }
     },
     addVector() {
-      this.test.vectors.push(new TestVector());
+      const vector = new TestVector();
+      vector.belongsToCurrentUser = true;
+      this.test.vectors.push(vector);
     },
     addObjective() {
       this.test.objectives.push(new TestObjective());

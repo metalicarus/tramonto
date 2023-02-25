@@ -37,13 +37,6 @@
                icon="bolt"
                @click="$router.push({ path: shareRoute, query: { uuid: props.row.id }});"
         />
-        <q-btn flat
-               rounded
-               size="sm"
-               color="red"
-               icon="terminal"
-               @click="$router.push({ path: executionRoute, query: { uuid: props.row.id }});"
-        />
       </q-td>
     </template>
   </q-table>
@@ -62,10 +55,6 @@ import UrlFilter from '../baseComponents/urlFilter/UrlFilter.vue';
 import UrlPagination from '../baseComponents/urlPagination/UrlPagination.vue';
 
 const props = defineProps({
-  executionRoute: {
-    type: String,
-    required: true,
-  },
   editRoute: {
     type: String,
     required: true,

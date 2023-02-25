@@ -15,6 +15,11 @@ class TestService {
   }
 
   // eslint-disable-next-line class-methods-use-this
+  changeVectorStatus(vectorId: string, approval: string): Promise<AxiosResponse> {
+    return api.patch(`/v1/test/changeVectorStatus?vectorId=${vectorId}&approval=${approval}`);
+  }
+
+  // eslint-disable-next-line class-methods-use-this
   save(test: TestDto): Promise<AxiosResponse<TestDto>> {
     return api.post('/v1/test', test);
   }

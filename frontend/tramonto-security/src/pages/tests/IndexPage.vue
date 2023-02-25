@@ -20,8 +20,7 @@
       </q-btn>
     </div>
     <q-card bordered class="q-pa-lg" flat>
-      <paginate-test :execution-route="executionRoute"
-                     :edit-route="editRoute"
+      <paginate-test :edit-route="editRoute"
                      :label="label"
                      :share-route="shareRoute"
       />
@@ -31,7 +30,7 @@
 
 <script>
 import {
-  ANCHOR_PAGE, TESTS_EXECUTION, TESTS_ICON, TESTS_PAGINATE, TESTS_SAVE, TESTS_SHARE,
+  ANCHOR_PAGE, TESTS_ICON, TESTS_PAGINATE, TESTS_SAVE, TESTS_SHARE,
 } from '../../consts/RoutesConsts';
 import { TESTS } from '../../consts/LabelsConsts';
 import PaginateTest from '../../components/test/PaginateTest.vue';
@@ -51,7 +50,6 @@ export default {
       anchorRoute: ANCHOR_PAGE,
       editRoute: TESTS_SAVE,
       shareRoute: TESTS_SHARE,
-      executionRoute: TESTS_EXECUTION,
     };
   },
 };

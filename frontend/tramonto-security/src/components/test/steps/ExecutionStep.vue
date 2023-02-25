@@ -27,6 +27,12 @@
         </q-item-label>
         <q-item-label caption lines="1"> {{ item.description }}</q-item-label>
       </q-item-section>
+      <q-item-section top>
+        <q-item-label lines="1">
+          <span class="text-weight-medium">{{ item.approval }}</span>
+        </q-item-label>
+        <q-item-label caption lines="1">Approval status</q-item-label>
+      </q-item-section>
       <q-item-section side top>
         <div class="text-grey-8 q-gutter-xs">
           <q-btn class="gt-xs"
@@ -37,15 +43,15 @@
                  size="12px"
                  @click="itemIndex = index; dialog = !dialog"
           />
-          <q-btn class="gt-xs"
+          <q-btn :disable="!test.belongsToCurrentUser && !test.vectors[index].belongsToCurrentUser"
+                 class="gt-xs"
                  icon="done"
                  size="12px"
                  dense
                  flat
                  round
-                 @click="$testStore.persistVector(itemIndex)"
+                 @click="$testStore.persistVector(index)"
           />
-          <q-btn class="gt-xs" dense flat icon="delete" round size="12px"/>
         </div>
       </q-item-section>
 
@@ -75,6 +81,8 @@
       <div class="q-pa-md">
         <div class="col-12 col-md-12">
           <q-input v-model="test.vectors[itemIndex].title"
+                   :disable="!test.belongsToCurrentUser &&
+                    !test.vectors[itemIndex].belongsToCurrentUser"
                    label="Title"
                    stack-label
                    outlined
@@ -83,6 +91,8 @@
         </div>
         <div class="col-12 col-md-12">
           <q-input v-model="test.vectors[itemIndex].description"
+                   :disable="!test.belongsToCurrentUser &&
+                    !test.vectors[itemIndex].belongsToCurrentUser"
                    label="Description"
                    type="textarea"
                    stack-label
@@ -92,6 +102,8 @@
         </div>
         <div class="col-12 col-md-12">
           <q-input v-model="test.vectors[itemIndex].expectedResults"
+                   :disable="!test.belongsToCurrentUser &&
+                    !test.vectors[itemIndex].belongsToCurrentUser"
                    label="Expected results"
                    type="textarea"
                    stack-label
@@ -101,6 +113,8 @@
         </div>
         <div class="col-12 col-md-12">
           <q-input v-model="test.vectors[itemIndex].resultsObtained"
+                   :disable="!test.belongsToCurrentUser &&
+                    !test.vectors[itemIndex].belongsToCurrentUser"
                    label="Results obtained"
                    type="textarea"
                    stack-label
@@ -113,6 +127,8 @@
             Reproducibility Rate: {{ test.vectors[itemIndex].reproducibility }} %
           </q-badge>
           <q-slider v-model="test.vectors[itemIndex].reproducibility"
+                    :disable="!test.belongsToCurrentUser &&
+                    !test.vectors[itemIndex].belongsToCurrentUser"
                     color="red"
           />
         </div>
@@ -121,11 +137,15 @@
             Impact Rate: {{ test.vectors[itemIndex].impact }} %
           </q-badge>
           <q-slider v-model="test.vectors[itemIndex].impact"
+                    :disable="!test.belongsToCurrentUser &&
+                    !test.vectors[itemIndex].belongsToCurrentUser"
                     color="blue"
           />
         </div>
         <div class="col-12 col-md-12">
           <q-select v-model="test.vectors[itemIndex].category.id"
+                    :disable="!test.belongsToCurrentUser &&
+                    !test.vectors[itemIndex].belongsToCurrentUser"
                     :options="vectors"
                     option-label="vectorCategory"
                     option-value="id"
@@ -135,6 +155,24 @@
                     emit-value
                     map-options
                     :rules="[ val => !!val > 0 || 'Please select something']"
+          />
+        </div>
+      </div>
+      <div class="q-pa-md">
+        <div class="col-12 col-md-12">
+          <q-select v-model="test.vectors[itemIndex].approval"
+                    :options="approvalOptions"
+                    :disable="!test.belongsToCurrentUser"
+                    @update:model-value="$testStore.changeVectorStatus(
+                      test.vectors[itemIndex].id,
+                      test.vectors[itemIndex].approval)"
+                    option-label="description"
+                    option-value="value"
+                    label="Approval"
+                    stack-label
+                    outlined
+                    emit-value
+                    map-options
           />
         </div>
       </div>
@@ -161,6 +199,24 @@ const props = defineProps({
 });
 const $testStore = useTestStore();
 const test: Ref<TestDto> = toRef(props, 'model');
+const approvalOptions = [
+  {
+    value: 'EDIT',
+    description: 'Edit',
+  },
+  {
+    value: 'APPROVED',
+    description: 'Approved',
+  },
+  {
+    value: 'PENDING',
+    description: 'Pending',
+  },
+  {
+    value: 'REJECTED',
+    description: 'Rejected',
+  },
+];
 const dialog = ref<boolean>(false);
 const maximizedToggle = ref<boolean>(true);
 const itemIndex = ref<number>(0);
